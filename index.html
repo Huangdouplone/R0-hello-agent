@@ -41,6 +41,10 @@ body{background:var(--bg);color:#2b3440;line-height:1.65;padding:18px;padding-bo
 .header .xp-bar{height:7px;background:rgba(255,255,255,.25);border-radius:6px;overflow:hidden;margin:0;}
 .header .xp-fill{height:100%;background:#fff;border-radius:6px;transition:width .4s;}
 .theme-btn{width:38px;height:38px;border-radius:11px;border:none;background:rgba(255,255,255,.18);color:#fff;font-size:16px;cursor:pointer;}
+/* 顶部 GitHub 仓库直达按钮（经典 octocat 圆形图标） */
+.gh-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#24292f;color:#fff;text-decoration:none;flex:0 0 auto;transition:transform .15s,background .15s,box-shadow .15s;}
+.gh-btn:hover{background:#0d1117;transform:scale(1.08);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+.gh-btn svg{width:20px;height:20px;display:block;}
 #localeBox{position:absolute;top:14px;right:16px;z-index:5;display:flex;gap:4px;}
 .locale-btn{appearance:none;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.15);color:#fff;
   border-radius:9px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;}
@@ -414,6 +418,7 @@ body.sbCollapsed .sb-toggle{display:flex;}
           <div class="xp-bar"><div class="xp-fill" id="xpFillHdr"></div></div>
         </div>
         <button class="theme-btn" id="themeBtn" data-act="theme" title="">🌓</button>
+        <a class="gh-btn" id="ghBtn" href="https://github.com/huangdouplone/R0-hello-agent" target="_blank" rel="noopener" title="GitHub 仓库 / Repository" aria-label="GitHub repository"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
       </div>
       <div id="localeBox" title="界面语言 / Interface language"></div>
     </div>
@@ -788,6 +793,7 @@ var I18N_EN = {
   "再看一遍": "Review again",
   "标记已复习": "Mark reviewed",
   "今日新学": "New today",
+  "打开 GitHub 仓库": "Open the GitHub repository",
 };
 function t(zh) { if (LANG === "en") { var v = I18N_EN[zh]; if (v != null) return v; } return zh; }
 
@@ -1375,6 +1381,7 @@ function applyLang() {
   var lb = $("lbHint"); if (lb) lb.textContent = (LANG === "en") ? "Chapter progress:" : "章节进度：";
   var tb = $("themeBtn"); if (tb) tb.title = t("切换浅色 / 深色 / 跟随系统");
   var cc = $("coinChip"); if (cc) cc.title = t("主页风格商店");
+  var gh = $("ghBtn"); if (gh) gh.title = t("打开 GitHub 仓库");
   renderLocale();
   renderAll();
 }
