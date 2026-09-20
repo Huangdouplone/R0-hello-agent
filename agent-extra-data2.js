@@ -564,7 +564,51 @@ var NEW_TERMS = [
     vs: "护栏降低风险，但无法保证 100% 安全。", vs_en: "Guardrails reduce risk but cannot guarantee safety." },
   { term: "Streaming", term_en: "Streaming", short: "逐 token 返回，先出字后补全。", short_en: "Return token by token: text appears before completion.", cat: "工程与运维",
     detail: ["显著改善首字延迟的体感。", "交互式产品几乎必备。"],
-    vs: "流式改善体感，不减少总耗时。", vs_en: "Streaming improves perceived speed, not total time." }
+    vs: "流式改善体感，不减少总耗时。", vs_en: "Streaming improves perceived speed, not total time." },
+
+  /* ---- MCP 生态细分（2026-09-20 补充） ---- */
+  { term: "MCP Tools", term_en: "MCP Tools", short: "Server 暴露的可调用动作，模型决定何时调。", short_en: "Callable actions a server exposes; the model decides when to call them.", cat: "生态与工具",
+    detail: ["由 Server 声明参数 schema，客户端转给模型。", "会改变外部状态，属「有副作用」的一类。"],
+    vs: "Tools 是「做」；Resources 是「读」。", vs_en: "Tools act; Resources read." },
+  { term: "MCP Resources", term_en: "MCP Resources", short: "可读取的资料，用 URI 标识，只读、无副作用。", short_en: "Read-only material identified by URI, with no side effects.", cat: "生态与工具",
+    detail: ["典型：文件、数据库记录、网页、日志。", "客户端用 Roots 决定它能看到哪些目录。"],
+    vs: "Resources 提供上下文，Tools 执行动作。", vs_en: "Resources supply context; Tools perform actions." },
+  { term: "MCP Prompts", term_en: "MCP Prompts", short: "Server 预置的提示模板，常映射成斜杠命令。", short_en: "Prompt templates a server offers, usually surfaced as slash commands.", cat: "生态与工具",
+    detail: ["由 Server 定义、用户显式选用。", "把「怎么问」的标准答案固化下来。"],
+    vs: "Prompts 是给用户的「起手式」，Tools 是给模型的「手」。", vs_en: "Prompts are the user's opening move; Tools are the model's hands." },
+  { term: "MCP Host", term_en: "MCP Host", short: "承载模型与用户的宿主应用（编辑器、桌面助手）。", short_en: "The host app running the model and the user session (editor, assistant).", cat: "生态与工具",
+    detail: ["Host 里为每个 Server 建一个 Client。", "权限与用户确认都发生在 Host 这一层。"],
+    vs: "Host 是「开着模型的那个程序」。", vs_en: "The host is the program running the model." },
+  { term: "MCP Client", term_en: "MCP Client", short: "Host 内部与某个 Server 一对一的连接器。", short_en: "A connector inside the host, one per server.", cat: "生态与工具",
+    detail: ["负责能力协商、消息收发与生命周期。", "一个 Host 可以同时有多个 Client。"],
+    vs: "Client 是「接线员」，不承载模型。", vs_en: "The client is the switchboard, not the model." },
+  { term: "MCP Server", term_en: "MCP Server", short: "对外暴露 Tools / Resources / Prompts 的一端。", short_en: "The side that exposes Tools / Resources / Prompts.", cat: "生态与工具",
+    detail: ["可以是本地进程（stdio），也可以是远程服务。", "只声明能力，不关心谁调用。"],
+    vs: "Server 提供能力，Client 消费能力。", vs_en: "Servers provide capability; clients consume it." },
+  { term: "MCP Transport", term_en: "MCP Transport", short: "消息怎么传：stdio（本地）或 HTTP/SSE（远程）。", short_en: "How messages travel: stdio locally, or HTTP/SSE remotely.", cat: "生态与工具",
+    detail: ["stdio：宿主拉起的子进程，最简单最常用。", "远程：Streamable HTTP / SSE，需鉴权、TLS 与重连。"],
+    vs: "传输方式与能力设计解耦，换传输不改 Server 语义。", vs_en: "Transport is decoupled from capability design." },
+  { term: "MCP Roots", term_en: "MCP Roots", short: "客户端告诉服务器「可以访问哪些目录」的边界。", short_en: "Boundaries the client tells the server about (which directories it may use).", cat: "生态与工具",
+    detail: ["由客户端发起，限制服务器的文件访问范围。", "是最小权限原则在 MCP 里的落地方式。"],
+    vs: "Roots 管「能看哪儿」，不等于给了整个文件系统的权限。", vs_en: "Roots scope what may be read, not full filesystem access." },
+  { term: "MCP Sampling", term_en: "MCP Sampling", short: "服务器反过来请求宿主模型生成内容。", short_en: "A server asking the host's model to generate content.", cat: "生态与工具",
+    detail: ["让 Server 不必自带模型与密钥。", "是否接受、用哪个模型由客户端决定。"],
+    vs: "Sampling 是「反向调用」：Server → Host 的模型。", vs_en: "Sampling is the reverse call: server → host model." },
+  { term: "Tool Schema", term_en: "Tool Schema", short: "工具的参数声明（名字、类型、是否必填）。", short_en: "A tool's parameter declaration (name, type, required).", cat: "生态与工具",
+    detail: ["写清类型与取值范围，模型才少调错。", "由 MCP Server 或函数定义提供。"],
+    vs: "Schema 是「工具说明书」，模型照着填参数。", vs_en: "The schema is the tool's manual the model fills in." },
+  { term: "Chunking", term_en: "Chunking", short: "把长文档切成适合检索的小段。", short_en: "Splitting long documents into retrievable pieces.", cat: "生态与工具",
+    detail: ["常见 300~800 字一段，相邻段留少量重叠。", "切法对检索质量的影响常比换模型更大。"],
+    vs: "切太小丢上下文，切太大稀释相关性。", vs_en: "Too small loses context; too large dilutes relevance." },
+  { term: "Agent Loop", term_en: "Agent Loop", short: "思考 → 行动 → 观察 的循环，Agent 的心跳。", short_en: "Reason → Act → Observe, the heartbeat of an agent.", cat: "生态与工具",
+    detail: ["每轮：决定动作 → 执行 → 读结果 → 再决定。", "必须有终止条件与最大步数。"],
+    vs: "Loop 是 Agent 与单次问答最大的差别。", vs_en: "The loop is what separates an agent from a one-shot answer." },
+  { term: "Human-in-the-loop", term_en: "Human-in-the-loop", short: "关键动作前由人确认。", short_en: "A human confirms before critical actions.", cat: "安全与风险",
+    detail: ["转账、删数据、对外发送这类操作必须审批。", "确认点要少而准，否则用户会盲点通过。"],
+    vs: "不是「每一步都问」，而是「危险的才问」。", vs_en: "Not every step — only the risky ones." },
+  { term: "Grounding", term_en: "Grounding", short: "把回答锚定到给定资料，减少幻觉。", short_en: "Anchoring answers to provided material to reduce hallucination.", cat: "基础",
+    detail: ["RAG 的最终目的就是 grounding。", "要求引用来源，便于核对与追责。"],
+    vs: "Grounding 讲「有依据」，幻觉讲「没依据」。", vs_en: "Grounding is about evidence; hallucination is about the lack of it." }
 ];
 
 /* 老词条补充分类（原 agent-extra-data.js 的 10 条 + 本文件前 6 条），使名词库可按类归组 */
@@ -968,6 +1012,67 @@ var BODY_EN = {
     code: "Package a workflow     → Skill\nReach external systems → plugin / MCP\nAuto-run at a moment   → Hook\nA quick entry point    → Slash Command\nLet the model choose   → Function Calling",
     pit: "Choosing technology first and hunting for a use case produces mechanisms nobody uses; start from a frequent pain point.",
     ex: { q: "Which mechanism for 'auto-format after every save'?", a: "A Hook — event-driven automatic execution." }
+  },
+
+  "c3l6": {
+    summary: [
+      "Running a model locally is only step one: turn it into an OpenAI-compatible endpoint so your code, plugins and agents can call it just like a cloud API.",
+      "Ollama ships a compatible endpoint (/v1 on port 11434) — just point base_url at it. vLLM started with `vllm serve` also speaks the OpenAI protocol and handles high concurrency well.",
+      "For a self-hosted service watch three things: concurrency vs VRAM, the context-length cap, and never exposing it to the public internet unprotected."
+    ],
+    code: "# Ollama: local compatible endpoint\nollama serve            # default http://localhost:11434\ncurl http://localhost:11434/v1/chat/completions \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"model\":\"qwen2.5:7b\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}]}'\n\n# vLLM: high-throughput serving\nvllm serve Qwen/Qwen2.5-7B-Instruct --port 8000",
+    pit: "Exposing a local server to the internet without auth hands your GPU and quota to strangers.",
+    ex: { q: "Why make a local model speak an OpenAI-compatible API?", a: "Existing code, plugins and agents can then switch between local and cloud by changing base_url only — no rewrite." }
+  },
+  "c6l6": {
+    summary: [
+      "Resources are MCP's read-only material: files, database records, web pages, logs — identified by URI, read without side effects.",
+      "The split with Tools is clean: Resources supply context (read), Tools perform actions (do). When the model needs to know, read a Resource; when it must change the world, call a Tool.",
+      "The client also uses Roots to tell the server which directories it may touch, keeping resource access inside a safe boundary."
+    ],
+    code: "Resource examples:\n  file:///notes/llm.md        # a note\n  db://orders/1024            # an order record\n  https://docs.example.com    # a web page\n\nFlow: list(resources) → read(uri) → inject into context",
+    pit: "Reading an entire handbook as one Resource blows up the context; read on demand or retrieve only the relevant slices.",
+    ex: { q: "Where is the line between Resources and Tools?", a: "Resources are read-only context with no side effects; Tools act and change external state." }
+  },
+  "c6l7": {
+    summary: [
+      "MCP separates what is said from how it travels: capability design uses Tools / Resources / Prompts, while Transport decides delivery.",
+      "Locally the norm is stdio — the server is a child process the host spawns, exchanging JSON-RPC over stdin/stdout. Remotely you use Streamable HTTP / SSE, which demands auth, TLS and reconnect logic.",
+      "Swapping Transport does not change a server's capability semantics — that is why MCP servers work across many clients."
+    ],
+    code: "Local:  Host ──stdio(JSON-RPC)──▶ server subprocess\nRemote: Host ──HTTPS + SSE/Streamable──▶ hosted server\nRemote must-haves: Authorization / OAuth, TLS, timeouts & reconnect",
+    pit: "Remote transport without auth or origin checks opens a public 'call any tool' doorway.",
+    ex: { q: "When do you pick stdio vs remote transport?", a: "stdio is simple and isolated for local single-machine use; remote enables sharing and hosting but needs auth, TLS and reconnection." }
+  },
+  "c6l8": {
+    summary: [
+      "MCP multiplies what the model can do, and with it the risk: reading files it should not, deleting data, leaking sensitive content outbound.",
+      "Four practices carry most of the weight: least capability (expose only necessary tools and resources), directory boundaries (Roots), human confirmation for writes, and full audit logging.",
+      "Vet third-party servers like third-party code: what capabilities do they declare, what do they access, do they phone home?"
+    ],
+    code: "Pre-launch checklist:\n  □ Expose only the needed Tools / Resources\n  □ Restrict directories with Roots\n  □ Require confirmation for write/delete/send\n  □ Log every tool call with inputs and results\n  □ Read the permission declaration of third-party servers",
+    pit: "Mounting a community server just because it runs — with full disk read/write — makes an incident a matter of time.",
+    ex: { q: "The most common mistake when authorising an MCP server?", a: "Granting full disk or full permissions for convenience instead of exposing only what is needed." }
+  },
+  "c7l6": {
+    summary: [
+      "Agent memory has two layers: short-term memory is the conversation and observations inside the current context window; long-term memory is external storage retrieved on demand.",
+      "Long-term memory is usually RAG: write key points into a vector store or database, then fetch them by similarity next round — a searchable notebook for the agent.",
+      "Memory requires a 'what to write' judgement: persist conclusions and user preferences, not every raw turn."
+    ],
+    code: "Short-term: context = system prompt + history + this turn's observations (grows per round — truncate or summarise)\nLong-term : key points → vector DB / database → retrieved back into context on demand",
+    pit: "Dumping whole transcripts into long-term memory makes retrieval mostly noise; extract key points first.",
+    ex: { q: "How is long-term agent memory usually implemented?", a: "Write key points to external storage (often a vector DB) and retrieve them into context later — that is RAG." }
+  },
+  "c13l6": {
+    summary: [
+      "After launch the question shifts from 'does it work' to 'is it stable and affordable'; monitoring turns both into numbers you can watch.",
+      "A minimal trio: structured logs (per-call inputs/outputs, tokens, latency), key metrics (success rate, P95 latency, daily spend), and failure alerts (notify when the error rate crosses a threshold).",
+      "Alerts must be actionable: include a request ID and error type so you can jump from 'it broke' to 'why it broke'."
+    ],
+    code: "Log : {ts, req_id, model, in_tok, out_tok, ms, ok, err}\nMetric: success rate / P95 latency / daily tokens & spend\nAlert : error rate > 5% or spend > budget → notify",
+    pit: "Logging only success/failure without tokens and latency leaves you unable to cost the run or find the slow step.",
+    ex: { q: "What is the minimal monitoring trio?", a: "Structured logs, key metrics (success rate / latency / spend) and failure alerts." }
   }
 };
 
@@ -1008,7 +1113,36 @@ var QUIZ_EN = {
   "钩子（Hook）由事件触发自动执行，不需要人主动调用。": { q: "A hook fires automatically on events and needs no deliberate invocation.", o: ["True", "False"] },
   "把「一套流程 + 脚本 + 参考资料」打包成可复用能力，通常叫？": { q: "Packaging a workflow plus scripts and material into a reusable capability is called?", o: ["A Hook", "A Skill", "A Token", "An Embedding"] },
   "把常用操作变成一条快捷指令的机制是___命令（填：斜杠 / 钩子）。": { q: "Turning a routine into a one-line shortcut is a ___ command (fill in).", o: [] },
-  "「模型决定调用哪个工具」这个能力属于？": { q: "The ability for the model to decide which tool to call belongs to?", o: ["MCP", "Function Calling", "Hook", "Skill"] }
+  "「模型决定调用哪个工具」这个能力属于？": { q: "The ability for the model to decide which tool to call belongs to?", o: ["MCP", "Function Calling", "Hook", "Skill"] },
+  "MCP 三类原语中，只读、用来提供上下文的是？": { q: "Among MCP's three primitives, which is read-only and supplies context?", o: ["Tools", "Resources", "Prompts", "Transport"] },
+
+  "同一个模型、同样的提示，两次回答却不一样，最可能的原因是？": { q: "Same model, same prompt, yet two different answers — most likely because?", o: ["The model is broken", "Sampling is random when temperature > 0", "Network jitter", "Not enough tokens"] },
+  "模型「知道」的只是训练数据里的统计规律，不会自动获取今天的最新消息。": { q: "A model only knows the statistical patterns in its training data and will not automatically know today's news.", o: ["True", "False"] },
+  "把一批请求一次性全部并发发出，最可能遇到什么？": { q: "Firing a whole batch of requests concurrently is most likely to cause?", o: ["Faster and steadier", "Rate limiting (429)", "A smarter model", "Fewer tokens"] },
+  "messages 数组中对话的顺序会影响模型的理解。": { q: "The order of messages in the array affects how the model understands the conversation.", o: ["True", "False"] },
+  "显存不够跑不动更大的模型时，最直接的办法是？": { q: "When VRAM cannot fit a bigger model, the most direct fix is?", o: ["Buy a bigger GPU", "Quantize to lower precision", "Raise temperature", "Longer prompts"] },
+  "本地模型的输出质量一定不如云端大模型。": { q: "A local model's output quality is always worse than a cloud model's.", o: ["False", "True"] },
+  "想让模型「先推理再作答」，提示里通常怎么写？": { q: "To make the model reason before answering, the prompt usually says?", o: ["Answer directly", "Reason step by step, then conclude", "Output JSON", "Be as brief as possible"] },
+  "提示词写得越长，效果一定越好。": { q: "The longer the prompt, the better the result — always.", o: ["False", "True"] },
+  "RAG 检索不到相关资料时，最稳妥的做法是？": { q: "When retrieval finds nothing relevant, the safest move is?", o: ["Answer anyway", "Say there is no evidence and ask for more input", "Invent a citation", "Lower the temperature"] },
+  "文档切片（chunk）的切法会明显影响检索质量。": { q: "How you chunk documents clearly affects retrieval quality.", o: ["True", "False"] },
+  "MCP 的 stdio 传输适合「把本地子进程当作 Server」的场景。": { q: "MCP's stdio transport suits using a local subprocess as the server.", o: ["True", "False"] },
+  "给 Agent 循环设置最大步数，主要目的是？": { q: "The main purpose of a max-step cap in the agent loop is?", o: ["Save tokens", "Prevent infinite loops and runaway behaviour", "Improve accuracy", "Prettier logs"] },
+  "Agent 的每一步都必须调用工具才能推进。": { q: "Every step of an agent must call a tool to make progress.", o: ["False", "True"] },
+  "给批量脚本里的每次请求加超时，主要作用是？": { q: "Adding a timeout per request in a batch script mainly?", o: ["Makes requests faster", "Stops one stuck request from sinking the batch", "Reduces tokens", "Improves accuracy"] },
+  "密钥写进代码，只要 Git 仓库是私有的就没有风险。": { q: "Hard-coding a key is safe as long as the Git repo is private.", o: ["False", "True"] },
+  "同样的输出长度下，降低单次调用成本最直接的做法是？": { q: "For the same output length, the most direct way to cut the cost per call is?", o: ["Use a smaller model or shorten the context", "Set temperature to 0", "Retry more", "Turn on streaming"] },
+  "模型越大，答案就一定越适合你的任务。": { q: "A bigger model's answer is always a better fit for your task.", o: ["False", "True"] },
+  "把模型输出直接变成实际操作之前，最该做的是？": { q: "Before turning model output into a real action, what comes first?", o: ["Execute immediately", "Validate format and value ranges", "Raise temperature", "Lengthen the prompt"] },
+  "敏感数据发给第三方模型前，应先脱敏或改用本地模型。": { q: "Sensitive data should be redacted — or a local model used — before sending it to a third-party model.", o: ["True", "False"] },
+  "评测集应该怎么准备？": { q: "How should an evaluation set be prepared?", o: ["Reuse examples seen in training", "Representative samples from real tasks", "Only easy questions", "Copy random questions online"] },
+  "在同一批样例上反复调提示词直到分数变高，就说明效果真的变好了。": { q: "Tuning a prompt on one sample set until the score rises means quality truly improved.", o: ["False", "True"] },
+  "知识更新频繁的场景，为什么优先 RAG 而不是微调？": { q: "When knowledge changes often, why prefer RAG over fine-tuning?", o: ["RAG is cheaper", "RAG takes effect by updating documents, with no retraining", "Fine-tuning cannot add knowledge", "RAG is always more accurate"] },
+  "多模态模型可以直接接收图片作为输入。": { q: "Multimodal models can take images directly as input.", o: ["True", "False"] },
+  "让长任务「可以安全重试」的关键是？": { q: "What makes a long task safe to retry?", o: ["Speed", "Making each step idempotent so repeats cause no side effects", "A bigger model", "Fewer logs"] },
+  "告警里应带上请求 ID 与错误类型，方便定位。": { q: "Alerts should carry a request ID and error type so they can be located.", o: ["True", "False"] },
+  "想让模型「每次保存后自动格式化」，应该用哪种机制？": { q: "Which mechanism auto-formats after every save?", o: ["A Skill", "A Hook", "A Slash Command", "An MCP Server"] },
+  "Skill 相比一段长提示词，优势在于把流程、脚本与资料打包、按需读取。": { q: "A Skill beats one long prompt by packaging workflow, scripts and material, loaded on demand.", o: ["True", "False"] }
 };
 
 /* ============================================================
@@ -1045,7 +1179,21 @@ var TERM_DETAIL_EN = {
   "Rerank": ["A key step for RAG quality.", "More precise than vector similarity alone."],
   "Rate Limit": ["Exceeding it returns 429.", "Retry with backoff and control concurrency."],
   "Guardrail": ["Blocks harmful and out-of-scope requests.", "Add human confirmation for critical actions."],
-  "Streaming": ["Greatly improves perceived first-token latency.", "Effectively mandatory for interactive products."]
+  "Streaming": ["Greatly improves perceived first-token latency.", "Effectively mandatory for interactive products."],
+  "MCP Tools": ["The server declares a parameter schema; the client passes it to the model.", "They change external state — the 'side-effect' primitive."],
+  "MCP Resources": ["Typical: files, database records, web pages, logs.", "Roots decide which directories the server may see."],
+  "MCP Prompts": ["Defined by the server and chosen explicitly by the user.", "They freeze the standard way of asking."],
+  "MCP Host": ["The host creates one client per server.", "Permissions and user confirmation live at this layer."],
+  "MCP Client": ["Handles capability negotiation, messaging and lifecycle.", "One host can run several clients at once."],
+  "MCP Server": ["Can be a local process (stdio) or a remote service.", "It only declares capabilities; it does not care who calls."],
+  "MCP Transport": ["stdio: a subprocess spawned by the host — simplest and most common.", "Remote: Streamable HTTP / SSE needs auth, TLS and reconnect."],
+  "MCP Roots": ["Initiated by the client to bound the server's file access.", "Least privilege, applied to MCP."],
+  "MCP Sampling": ["Lets a server work without its own model or keys.", "The client decides whether to accept and which model to use."],
+  "Tool Schema": ["Precise types and value ranges reduce wrong calls.", "Supplied by the MCP server or a function definition."],
+  "Chunking": ["Often 300–800 characters per chunk with slight overlap.", "Chunking strategy usually matters more than the model you pick."],
+  "Agent Loop": ["Each round: decide an action → execute → read the result → decide again.", "Always set a termination condition and a max-step cap."],
+  "Human-in-the-loop": ["Transfers, deletions and outbound sends must be approved.", "Keep confirmation points few and sharp, or users click through blindly."],
+  "Grounding": ["Grounding is the end goal of RAG.", "Cite sources so answers can be verified and audited."]
 };
 
 /* ============================================================
@@ -1058,7 +1206,11 @@ var CONCEPT_MAP = {
     { id: "RAG", tier: 1 }, { id: "Function Calling", tier: 1 }, { id: "Inference", tier: 1 },
     { id: "Token", tier: 2 }, { id: "Context Window", tier: 2 }, { id: "Temperature", tier: 2 },
     { id: "Quantization", tier: 2 }, { id: "Fine-tuning", tier: 2 }, { id: "Embedding", tier: 2 },
-    { id: "Vector DB", tier: 2 }, { id: "Prompt Injection", tier: 2 }, { id: "Latency", tier: 2 }
+    { id: "Vector DB", tier: 2 }, { id: "Prompt Injection", tier: 2 }, { id: "Latency", tier: 2 },
+    { id: "Agent Loop", tier: 2 },
+    /* 第三层：MCP 生态细分（Server / 三种原语 / Client） */
+    { id: "MCP Server", tier: 3 }, { id: "MCP Resources", tier: 3 }, { id: "MCP Tools", tier: 3 },
+    { id: "MCP Prompts", tier: 3 }, { id: "MCP Client", tier: 3 }
   ],
   edges: [
     { a: "Agent", b: "LLM", zh: "用它当大脑", en: "uses as its brain" },
@@ -1080,7 +1232,176 @@ var CONCEPT_MAP = {
     { a: "MCP", b: "Function Calling", zh: "把工具标准化", en: "standardizes" },
     { a: "Prompt Injection", b: "Prompt", zh: "劫持", en: "hijacks" },
     { a: "Prompt Injection", b: "Agent", zh: "攻击", en: "attacks" },
-    { a: "Latency", b: "Inference", zh: "衡量它快不快", en: "measures speed" }
+    { a: "Latency", b: "Inference", zh: "衡量它快不快", en: "measures speed" },
+    /* MCP 生态细分 */
+    { a: "MCP", b: "MCP Server", zh: "由它提供能力", en: "capability lives in the server" },
+    { a: "MCP", b: "MCP Client", zh: "宿主内的连接器", en: "connector inside the host" },
+    { a: "MCP Server", b: "MCP Tools", zh: "暴露", en: "exposes" },
+    { a: "MCP Server", b: "MCP Resources", zh: "暴露", en: "exposes" },
+    { a: "MCP Server", b: "MCP Prompts", zh: "暴露", en: "exposes" },
+    { a: "MCP Tools", b: "Function Calling", zh: "落到模型侧就是它", en: "lands as function calling" },
+    { a: "MCP Resources", b: "Context Window", zh: "读进来当上下文", en: "read into context" },
+    { a: "MCP Prompts", b: "Prompt", zh: "模板化", en: "templated into" },
+    /* Agent 循环 */
+    { a: "Agent", b: "Agent Loop", zh: "靠这个循环运转", en: "runs on this loop" },
+    { a: "Agent Loop", b: "Function Calling", zh: "每轮决定调什么", en: "decides what to call each round" }
+  ]
+};
+
+/* ============================================================
+ * 七点七、给「既有章节」追加课节与题目（叠加层：不改原始数据文件）
+ * 深化重点：MCP 三种原语、传输方式与安全边界；本地服务化；Agent 记忆；上线监控。
+ * ============================================================ */
+var EXTRA_LESSONS = {
+  c3: [{
+    id: "c3l6", title: "把本地模型变成 API：Ollama / vLLM", title_en: "Turn a Local Model into an API",
+    summary: [
+      "本地跑起来只是第一步：把它变成「OpenAI 兼容的接口」，你的代码、插件、Agent 才能像调云端一样调它。",
+      "Ollama 自带兼容端点（默认 11434 端口的 /v1 路径），把 base_url 指过去即可；vLLM 用 vllm serve 启动，天然提供兼容服务，适合高并发。",
+      "自建服务要盯三件事：并发与显存、上下文长度上限，以及千万别把服务裸奔到公网。"
+    ],
+    code: "# Ollama：本地兼容端点\nollama serve            # 默认 http://localhost:11434\ncurl http://localhost:11434/v1/chat/completions \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"model\":\"qwen2.5:7b\",\"messages\":[{\"role\":\"user\",\"content\":\"你好\"}]}'\n\n# vLLM：高并发服务\nvllm serve Qwen/Qwen2.5-7B-Instruct --port 8000",
+    pit: "把本地服务直接暴露到公网且不加鉴权，等于把显卡和配额送给别人。",
+    ex: { q: "为什么要让本地模型提供 OpenAI 兼容接口？", a: "这样现有代码、插件与 Agent 只改 base_url 就能在本地与云端之间切换，无需重写调用层。" } }],
+
+  c6: [{
+    id: "c6l6", title: "Resources：把资料喂给模型（只读原语）", title_en: "Resources: Feeding Material In (Read-only)",
+    summary: [
+      "Resources 是 MCP 里「只读的资料」：文件、数据库记录、网页、日志，用 URI 标识，读取不产生副作用。",
+      "它和 Tools 的分工很清楚：Resources 提供上下文（读），Tools 执行动作（做）。模型需要「知道」，就读 Resource；需要「改变世界」，才调 Tool。",
+      "客户端还会用 Roots 告诉服务器「能访问哪些目录」，把资源访问限制在安全边界内。"
+    ],
+    code: "Resource 示例：\n  file:///notes/llm.md        # 一份笔记\n  db://orders/1024            # 一条订单记录\n  https://docs.example.com    # 一个网页\n\n流程：list(resources) → read(uri) → 拼进上下文",
+    pit: "把整本手册当 Resource 一次性读进来，上下文会被塞爆；应按需读取，或配合检索只取相关片段。",
+    ex: { q: "Resources 与 Tools 的边界是什么？", a: "Resources 只读、提供上下文、无副作用；Tools 会执行动作、改变外部状态。" } },
+  {
+    id: "c6l7", title: "Transport：stdio 与 HTTP/SSE 怎么选", title_en: "Transport: stdio vs HTTP/SSE",
+    summary: [
+      "MCP 把「说什么」和「怎么传」分开：能力设计用 Tools / Resources / Prompts，传输方式交给 Transport。",
+      "本地最常用 stdio——Server 就是宿主拉起的子进程，用标准输入输出传 JSON-RPC；远程用 Streamable HTTP / SSE，必须补上鉴权、TLS 与重连。",
+      "换 Transport 不需要改 Server 的能力语义，这正是 MCP 能被各种客户端复用的原因。"
+    ],
+    code: "本地：Host ──stdio(JSON-RPC)──▶ Server 子进程\n远程：Host ──HTTPS + SSE/Streamable──▶ 线上 Server\n远程必备：Authorization / OAuth、TLS、重连与超时",
+    pit: "远程传输忘了鉴权与来源校验，等于在公网开了一个「任意工具调用」的入口。",
+    ex: { q: "stdio 与远程 Transport 各自适合什么场景？", a: "stdio 简单、隔离好，适合本地单机；远程便于共享与托管，但必须补齐鉴权、TLS 与重连。" } },
+  {
+    id: "c6l8", title: "MCP 的安全边界与权限", title_en: "MCP: Security Boundaries & Permissions",
+    summary: [
+      "MCP 让模型能做的事变多，风险也随之放大：越权读文件、误删数据、把敏感内容外发。",
+      "落地抓四条：能力最小化（只暴露必需的工具与资源）、目录边界（Roots）、写操作人工确认、以及全程审计日志。",
+      "第三方 Server 要像对待第三方代码一样审查：它声明了什么能力、要访问什么、会不会联网。"
+    ],
+    code: "上线前检查：\n  □ 只暴露必需的 Tools / Resources\n  □ 用 Roots 限定可访问目录\n  □ 写/删/发类操作要求人工确认\n  □ 记录每次工具调用的入参与结果\n  □ 第三方 Server 先读权限声明",
+    pit: "只因为「能跑」就把社区 Server 挂上，还给了全盘读写权限——出事只是时间问题。",
+    ex: { q: "给 MCP Server 授权时最容易犯的错是什么？", a: "图省事给全盘／全权限，而不是按最小权限只暴露必要的工具与目录。" } }],
+
+  c7: [{
+    id: "c7l6", title: "记忆：短期上下文与长期记忆", title_en: "Memory: Short-term vs Long-term",
+    summary: [
+      "Agent 的记忆分两层：短期记忆就是当前上下文窗口里的对话与观察；长期记忆是外部存储，需要时再检索回来。",
+      "长期记忆通常用 RAG 实现：把要点写进向量库或数据库，下一轮按相似度取回，等于给 Agent 配了一个可检索的笔记本。",
+      "记忆要做「写什么」的取舍：沉淀关键结论与用户偏好，别把整段原始对话都存进去。"
+    ],
+    code: "短期：context = 系统提示 + 历史 + 本轮观察（随轮次增长，需截断或摘要）\n长期：关键结论 → 向量库 / 数据库 → 下一轮按需检索回上下文",
+    pit: "把全部对话原文塞进长期记忆，检索时噪声比信息还多；应先抽取要点再存。",
+    ex: { q: "Agent 的长期记忆通常怎么实现？", a: "把要点写入外部存储（常见是向量库），下一轮按需检索回上下文——本质就是 RAG。" } }],
+
+  c13: [{
+    id: "c13l6", title: "监控：日志、指标与告警", title_en: "Monitoring: Logs, Metrics & Alerts",
+    summary: [
+      "上线之后问题从「能不能跑」变成「跑得稳不稳、贵不贵」；监控就是把这两件事变成可看的数字。",
+      "最小可用三件套：结构化日志（每次调用的入参出参、token、耗时）、关键指标（成功率、P95 延迟、日花费）、失败告警（错误率超阈值就通知）。",
+      "告警要能定位：带上请求 ID 与错误类型，才能从「炸了」快速跳到「为什么炸」。"
+    ],
+    code: "日志：{ts, req_id, model, in_tok, out_tok, ms, ok, err}\n指标：成功率 / P95 延迟 / 日 token 与花费\n告警：错误率 > 5% 或 花费 > 预算 → 通知",
+    pit: "只记「成功/失败」而不记 token 与耗时，出问题时既算不清成本，也定位不到慢在哪一步。",
+    ex: { q: "监控的最小可用三件套是什么？", a: "结构化日志、关键指标（成功率/延迟/花费）、失败告警。" } }]
+};
+/* 每章题库补齐到 6 题：测评改为「题库抽题 + 选项乱序」，小题库抽不出随机性 */
+var EXTRA_QUIZ = {
+  c1: [
+    { q: "同一个模型、同样的提示，两次回答却不一样，最可能的原因是？", o: ["模型坏了", "采样带随机性（temperature > 0）", "网络抖动", "token 不够"],
+      a: 1, why: "生成是概率采样，温度大于 0 时每次抽到的token可能不同。", type: "choice" },
+    { q: "模型「知道」的只是训练数据里的统计规律，不会自动获取今天的最新消息。", o: ["正确", "错误"],
+      a: 0, why: "训练完成后权重固定；时效信息要靠检索或工具补齐。", type: "judge" }
+  ],
+  c2: [
+    { q: "把一批请求一次性全部并发发出，最可能遇到什么？", o: ["更快更稳", "触发限流 429", "模型变聪明", "token 变少"],
+      a: 1, why: "瞬时并发过高会触发平台限流，应控制并发并退避重试。", type: "choice" },
+    { q: "messages 数组中对话的顺序会影响模型的理解。", o: ["正确", "错误"],
+      a: 0, why: "对话按顺序拼进上下文，顺序错乱会破坏语义。", type: "judge" }
+  ],
+  c3: [
+    { q: "显存不够跑不动更大的模型时，最直接的办法是？", o: ["换更大的显卡", "量化到更低精度", "调高 temperature", "加长提示词"],
+      a: 1, why: "4-bit 量化能显著降低显存占用。", type: "choice" },
+    { q: "本地模型的输出质量一定不如云端大模型。", o: ["错误", "正确"],
+      a: 0, why: "质量差距来自模型规模本身，而非部署位置；同规模可以一致。", type: "judge" }
+  ],
+  c4: [
+    { q: "想让模型「先推理再作答」，提示里通常怎么写？", o: ["请直接给答案", "请一步步推理后再给结论", "请输出 JSON", "请尽量简短"],
+      a: 1, why: "显式要求分步推理就是思维链的触发方式。", type: "choice" },
+    { q: "提示词写得越长，效果一定越好。", o: ["错误", "正确"],
+      a: 0, why: "无关内容会稀释重点并浪费 token；信息清晰比篇幅更重要。", type: "judge" }
+  ],
+  c5: [
+    { q: "RAG 检索不到相关资料时，最稳妥的做法是？", o: ["硬答一个", "说明没有依据并请用户补充", "编一段引用", "降低温度再答"],
+      a: 1, why: "没有依据就承认，避免幻觉；这正是 grounding 的意义。", type: "choice" },
+    { q: "文档切片（chunk）的切法会明显影响检索质量。", o: ["正确", "错误"],
+      a: 0, why: "切片大小与重叠直接决定召回内容的相关性。", type: "judge" }
+  ],
+  c6: [
+    { q: "MCP 三类原语中，只读、用来提供上下文的是？", o: ["Tools", "Resources", "Prompts", "Transport"],
+      a: 1, why: "Resources 只读、提供上下文；Tools 才是有副作用的动作，Prompts 是预置指令模板。", type: "choice" },
+    { q: "MCP 的 stdio 传输适合「把本地子进程当作 Server」的场景。", o: ["正确", "错误"],
+      a: 0, why: "stdio 由宿主拉起子进程、用标准输入输出通信，是最常用的本地方式。", type: "judge" }
+  ],
+  c7: [
+    { q: "给 Agent 循环设置最大步数，主要目的是？", o: ["省 token", "防止无限循环与失控", "提高准确率", "让日志更好看"],
+      a: 1, why: "没有终止条件时 Agent 可能反复调用工具空转。", type: "choice" },
+    { q: "Agent 的每一步都必须调用工具才能推进。", o: ["错误", "正确"],
+      a: 0, why: "模型可以直接给结论，也可以选择调用工具，取决于任务需要。", type: "judge" }
+  ],
+  c8: [
+    { q: "给批量脚本里的每次请求加超时，主要作用是？", o: ["让请求更快", "防止个别请求卡死拖垮整批", "减少 token", "提高准确率"],
+      a: 1, why: "超时避免单点阻塞拖垮整个批处理。", type: "choice" },
+    { q: "密钥写进代码，只要 Git 仓库是私有的就没有风险。", o: ["错误", "正确"],
+      a: 0, why: "私有仓库也可能被共享、转公开或被人拉走；密钥应放 .env 并加入 .gitignore。", type: "judge" }
+  ],
+  c9: [
+    { q: "同样的输出长度下，降低单次调用成本最直接的做法是？", o: ["换更小的模型或缩短上下文", "把 temperature 调到 0", "增加重试次数", "开启流式输出"],
+      a: 0, why: "模型档位与上下文长度是成本的两个主要杠杆。", type: "choice" },
+    { q: "模型越大，答案就一定越适合你的任务。", o: ["错误", "正确"],
+      a: 0, why: "应按任务难度选型；简单任务用大模型又慢又贵。", type: "judge" }
+  ],
+  c10: [
+    { q: "把模型输出直接变成实际操作之前，最该做的是？", o: ["立刻执行", "先校验格式与取值范围", "调高温度", "加长提示词"],
+      a: 1, why: "输出不可信，必须先校验；危险动作还要人工确认。", type: "choice" },
+    { q: "敏感数据发给第三方模型前，应先脱敏或改用本地模型。", o: ["正确", "错误"],
+      a: 0, why: "最小必要与脱敏是隐私合规的基本要求。", type: "judge" }
+  ],
+  c11: [
+    { q: "评测集应该怎么准备？", o: ["用训练时见过的例子", "覆盖真实任务的代表性样例", "只挑简单的题", "随机抄网上的题"],
+      a: 1, why: "评测集要能代表真实使用场景，分数才有意义。", type: "choice" },
+    { q: "在同一批样例上反复调提示词直到分数变高，就说明效果真的变好了。", o: ["错误", "正确"],
+      a: 0, why: "这是对评测集过拟合；要留出未参与调优的样例复验。", type: "judge" }
+  ],
+  c12: [
+    { q: "知识更新频繁的场景，为什么优先 RAG 而不是微调？", o: ["RAG 更便宜", "RAG 改资料即可生效，无需重训", "微调不能提升知识", "RAG 一定更准"],
+      a: 1, why: "RAG 只需更新资料库；微调要重新训练，成本高且时效差。", type: "choice" },
+    { q: "多模态模型可以直接接收图片作为输入。", o: ["正确", "错误"],
+      a: 0, why: "多模态支持图像等输入，例如读取表格截图、识别票据。", type: "judge" }
+  ],
+  c13: [
+    { q: "让长任务「可以安全重试」的关键是？", o: ["加快速度", "让每一步幂等，重复执行不产生副作用", "换更大的模型", "减少日志"],
+      a: 1, why: "幂等才能安全重试，避免重复扣款、重复发送这类事故。", type: "choice" },
+    { q: "告警里应带上请求 ID 与错误类型，方便定位。", o: ["正确", "错误"],
+      a: 0, why: "没有定位信息的告警等于只告诉你「炸了」。", type: "judge" }
+  ],
+  c14: [
+    { q: "想让模型「每次保存后自动格式化」，应该用哪种机制？", o: ["Skill", "Hook 钩子", "Slash Command", "MCP Server"],
+      a: 1, why: "事件驱动的自动执行属于钩子。", type: "choice" },
+    { q: "Skill 相比一段长提示词，优势在于把流程、脚本与资料打包、按需读取。", o: ["正确", "错误"],
+      a: 0, why: "按需加载更省上下文，也更稳定可复用。", type: "judge" }
   ]
 };
 
@@ -1088,6 +1409,11 @@ var CONCEPT_MAP = {
  * 八、合并进全局（必须在 lang-en.js / lang-en-content.js 之后执行）
  * ============================================================ */
 window.AGENT_CURRICULUM = (window.AGENT_CURRICULUM || []).concat(NEW_STAGES);
+/* 既有章节追加课节 / 题目（必须在下面「重建英文表」之前完成，否则新课节标题进不了 EN 表） */
+window.AGENT_CURRICULUM.forEach(function (s) {
+  if (EXTRA_LESSONS[s.id]) s.lessons = (s.lessons || []).concat(EXTRA_LESSONS[s.id]);
+  if (EXTRA_QUIZ[s.id]) s.quiz = (s.quiz || []).concat(EXTRA_QUIZ[s.id]);
+});
 window.AGENT_LABS = (window.AGENT_LABS || []).concat(NEW_LABS);
 window.AGENT_TERMS = (window.AGENT_TERMS || []).concat(NEW_TERMS);
 /* 名词库：给缺 cat 的旧词条按 TERM_CAT 补分类（不修改原始数据文件） */

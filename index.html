@@ -18,7 +18,7 @@
   --cell0:#e6ecf2;--prebg:#1b2433;--shadow:0 2px 12px rgba(30,45,70,.06);
   --fg:#233044;--bg2:#e9eff5;
 }
-body{background:var(--bg);color:#2b3440;line-height:1.65;padding:18px;padding-bottom:60px;transition:background .25s,color .25s;}
+body{background:var(--bg);color:var(--fg);line-height:1.65;padding:18px;padding-bottom:60px;transition:background .25s,color .25s;}
 .container{max-width:1040px;margin:0 auto;padding:0 4px;}
 
 /* 顶部栏（对齐 R0-hello-world 的 .header 圆角卡片结构） */
@@ -77,6 +77,18 @@ body{background:var(--bg);color:#2b3440;line-height:1.65;padding:18px;padding-bo
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sb-item:hover{background:var(--bg2);color:var(--fg);}
 .sb-item.on{color:var(--blue);font-weight:700;}
+/* 侧边栏课程目录：分组头 + 展开的课节列表 */
+.sb-group-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 10px;border-radius:8px;
+  font-size:11.5px;font-weight:700;color:var(--sub);cursor:pointer;letter-spacing:.5px;margin:12px 0 6px;}
+.sb-group-hd:hover{background:var(--bg2);color:var(--ink);}
+.sb-caret{font-size:10px;opacity:.75;flex:0 0 auto;}
+.sb-lessons{margin:2px 0 8px;padding-left:10px;border-left:2px solid var(--line);}
+.sb-lesson{display:flex;gap:6px;align-items:center;padding:4px 8px;border-radius:7px;font-size:12px;color:var(--sub);
+  cursor:pointer;line-height:1.45;}
+.sb-lesson:hover{background:var(--bg2);color:var(--ink);}
+.sb-lesson .n{font-weight:700;opacity:.7;flex:0 0 auto;}
+.sb-lesson .ok{margin-left:auto;color:var(--green);font-weight:700;}
+.sb-lesson.done span:nth-child(2){text-decoration:line-through;opacity:.75;}
 body.sbCollapsed .sidebar{transform:translateX(-100%);}
 body.sbCollapsed{padding-left:18px !important;}
 body.sbCollapsed .sb-toggle{display:flex;}
@@ -524,7 +536,7 @@ body.sbCollapsed .sb-toggle{display:flex;}
   </section>
   <section id="mapSec" class="section">
     <h2>🗺️ <span data-i18n="概念地图">概念地图</span> <span class="tag" data-i18n="点选名词，实时看关系">点选名词，实时看关系</span></h2>
-    <svg id="cmapSvg" class="cmap-svg" viewBox="0 0 660 372" preserveAspectRatio="xMidYMid meet" role="img" aria-label="概念地图"></svg>
+    <svg id="cmapSvg" class="cmap-svg" viewBox="0 0 780 428" preserveAspectRatio="xMidYMid meet" role="img" aria-label="概念地图"></svg>
     <div class="cmap-note" id="cmapNote"></div>
     <div class="chips" id="conceptChips"></div>
   </section>
@@ -581,6 +593,7 @@ body.sbCollapsed .sb-toggle{display:flex;}
   <div style="margin-top:10px">🔗 <span data-i18n="EDU系列其他项目：">EDU系列其他项目：</span>
     <a class="series-link" href="https://huangdouplone.github.io/R0-hello-world/" target="_blank" rel="noopener" data-i18n="🌱 R0:hello world · 从零开始的编程之路">🌱 R0:hello world · 从零开始的编程之路</a>
     <a class="series-link" href="https://huangdouplone.github.io/R0-hello-agi/" target="_blank" rel="noopener" data-i18n="🔗 R0:hello agi · 从零开始的 AGI 之路">🔗 R0:hello agi · 从零开始的 AGI 之路</a>
+      <a class="series-link" href="https://huangdouplone.github.io/R0-hello-office/" target="_blank" rel="noopener" data-i18n="🗂️ R0:hello office · 从0开始的Office">🗂️ R0:hello office · 从0开始的Office</a>
   </div>
   <div style="margin-top:14px;font-size:11px;opacity:.7;letter-spacing:.5px" data-i18n="隶属于拾色造梦企划EDU系列">隶属于拾色造梦企划EDU系列</div>
 </footer>
@@ -597,7 +610,7 @@ body.sbCollapsed .sb-toggle{display:flex;}
 <script src="agent-extra-data.js?v=6"></script>
 <script src="lang-en.js?v=3"></script>
 <script src="lang-en-content.js?v=14"></script>
-<script src="agent-extra-data2.js?v=3"></script>
+<script src="agent-extra-data2.js?v=5"></script>
 <script>
 /*
  * 制作者 / Creator:    Bilibili 黄豆666 (huangdouplone)
@@ -641,6 +654,7 @@ function saveData() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(data))
 var LANG = (data.settings && data.settings.lang) || "zh";
 var I18N_EN = {
   "R0：从零开始的大模型": "R0:hello agent",
+  "🗂️ R0:hello office · 从0开始的Office": "🗂️ R0:hello office · Office from Zero",
   "成长仪表盘": "Dashboard",
   "概念地图": "Concept Map",
   "一张图看懂生态": "See the ecosystem at a glance",
@@ -850,7 +864,13 @@ function crComment() { return "# " + CR_ZH + "\n# " + CR_EN + "\n"; }
 function crAttr() { return '<span class="cr-attr">' + esc(crComment()) + "</span>"; }
 
 /* ===================== 主题 / 皮肤 ===================== */
-var STYLE_VARS = ["--bg", "--card", "--line", "--ink", "--sub", "--blue", "--amber", "--soft", "--shadow", "--red"];
+/* 皮肤可覆盖的「全部」变量：少一个就会从基础主题泄漏 ——
+   典型症状：暗色皮肤里冒出浅色区块（--bg2 泄漏）、文字读不出来（--fg 泄漏）。 */
+var STYLE_VARS = ["--bg", "--bg2", "--card", "--soft", "--line", "--ink", "--fg", "--sub",
+  "--blue", "--green", "--amber", "--red", "--purple", "--shadow"];
+/* 强调色：皮肤若定义了就用它的色相、只改明度；没定义的按同名兜底色补 */
+var ACCENT_KEYS = ["--blue", "--green", "--amber", "--red", "--purple"];
+var ACCENT_FALLBACK = { "--green": "#2e9e5b", "--purple": "#8a63d2" };
 var HOMEPAGE_STYLES = [
   { id: "default", name: "晨曦蓝", name_en: "Dawn Blue", icon: "🌤️", cost: 0, desc: "默认 · 清爽蓝白", desc_en: "Default · clean blue & white", vars: {} },
   { id: "neon", name: "暗夜霓虹", name_en: "Neon Night", icon: "🌃", cost: 60, desc: "深空底 + 霓虹紫边", desc_en: "Deep space + neon violet", vars: { "--bg": "#0e1020", "--card": "#171a2e", "--line": "#2a2f4a", "--ink": "#e8ecff", "--sub": "#9aa3c7", "--blue": "#7c5cff", "--amber": "#ffb454", "--soft": "#1d2138", "--shadow": "0 6px 20px rgba(0,0,0,.45)", "--red": "#ff6b8a" } },
@@ -869,20 +889,89 @@ var HOMEPAGE_STYLES = [
   { id: "sunset_dark", name: "暮光暗调", name_en: "Dusk Dark", icon: "🌆", cost: 140, desc: "深紫暮色 + 暖橙余晖", desc_en: "Deep dusk purple + warm orange glow", vars: { "--bg": "#1a1025", "--card": "#251835", "--line": "#3d2a52", "--ink": "#f0e0ff", "--sub": "#9e85b8", "--blue": "#c084fc", "--amber": "#fb923c", "--soft": "#2d1f40", "--shadow": "0 6px 24px rgba(0,0,0,.5)", "--red": "#f87171" } },
   { id: "ocean_dark", name: "深海幽暗", name_en: "Abyss Blue", icon: "🐋", cost: 130, desc: "深海蓝黑 + 幽绿荧光", desc_en: "Deep ocean black + bioluminescent teal", vars: { "--bg": "#050e1a", "--card": "#0a1a2e", "--line": "#14304a", "--ink": "#c8e8f8", "--sub": "#5a8aaa", "--blue": "#06b6d4", "--amber": "#fbbf24", "--soft": "#0c2438", "--shadow": "0 6px 24px rgba(0,0,0,.5)", "--red": "#f87171" } }
 ];
+/* ---- 颜色工具：把皮肤签名色板推导出「明/暗对偶」，使皮肤与昼夜模式共存 ---- */
+function _hx(h) {
+  h = String(h == null ? "" : h).trim(); if (h.charAt(0) === "#") h = h.slice(1);
+  if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+  if (h.length !== 6) return null; var n = parseInt(h, 16); if (isNaN(n)) return null;
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function _hsl(c) {
+  var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b),
+    l = (mx + mn) / 2, d = mx - mn, h = 0, s = 0;
+  if (d) {
+    s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    if (mx === r) h = (g - b) / d + (g < b ? 6 : 0); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+    h *= 60;
+  }
+  return { h: h, s: s * 100, l: l * 100 };
+}
+function _hex(H, S, L) {
+  H = ((H % 360) + 360) % 360; S = Math.max(0, Math.min(100, S)) / 100; L = Math.max(0, Math.min(100, L)) / 100;
+  var c = (1 - Math.abs(2 * L - 1)) * S, x = c * (1 - Math.abs((H / 60) % 2 - 1)), m = L - c / 2, r = 0, g = 0, b = 0;
+  if (H < 60) { r = c; g = x; } else if (H < 120) { r = x; g = c; } else if (H < 180) { g = c; b = x; }
+  else if (H < 240) { g = x; b = c; } else if (H < 300) { r = x; b = c; } else { r = c; b = x; }
+  var f = function (v) { var n2 = Math.max(0, Math.min(255, Math.round((v + m) * 255))); return ("0" + n2.toString(16)).slice(-2); };
+  return "#" + f(r) + f(g) + f(b);
+}
+function _lum(hex) {
+  var c = _hx(hex); if (!c) return 0.5;
+  var f = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
+}
+function _retune(hex, L, S) { var c = _hx(hex); if (!c) return hex; var o = _hsl(c); return _hex(o.h, S != null ? S : o.s, L); }
+/* 以皮肤主底色的色相为基调生成「另一极」色板：亮皮肤→暗色板，暗皮肤→亮色板；
+   只重排明度、保留色相与强调色取向，因此每个皮肤在昼夜两侧都还是它自己。 */
+function flipSkin(v, toDark) {
+  var o = _hsl(_hx(v["--bg"]) || [255, 255, 255]), h = o.h, sh = Math.min(o.s, 42), p = {};
+  if (toDark) {
+    p["--bg"] = _hex(h, sh, 9); p["--bg2"] = _hex(h, sh, 12); p["--card"] = _hex(h, Math.min(sh + 4, 46), 13);
+    p["--soft"] = _hex(h, sh, 11); p["--line"] = _hex(h, Math.min(sh + 6, 34), 24);
+    p["--ink"] = _hex(h, 20, 93); p["--fg"] = _hex(h, 20, 93); p["--sub"] = _hex(h, 13, 65);
+    p["--shadow"] = "0 6px 24px rgba(0,0,0,.5)";
+  } else {
+    p["--bg"] = _hex(h, Math.min(sh, 70), 97); p["--bg2"] = _hex(h, Math.min(sh, 60), 95);
+    p["--card"] = _hex(h, Math.min(sh, 50), 100); p["--soft"] = _hex(h, Math.min(sh, 60), 94);
+    p["--line"] = _hex(h, Math.min(sh, 45), 88);
+    p["--ink"] = _hex(h, 26, 17); p["--fg"] = _hex(h, 26, 17); p["--sub"] = _hex(h, 15, 46);
+    p["--shadow"] = "0 6px 18px rgba(20,30,50,.12)";
+  }
+  /* 强调色跟着一起换极：只重排明度、保留色相，这样每一极都还是这个皮肤自己的颜色 */
+  ACCENT_KEYS.forEach(function (k) { if (v[k]) p[k] = _retune(v[k], toDark ? 72 : 42); });
+  return p;
+}
+/* 当前应生效的皮肤色板：
+   ① 先按当前昼夜推导出一套「完整」色板（补齐皮肤没定义的 --bg2/--fg 等，防止从基础主题泄漏）；
+   ② 若当前极性正是该皮肤的原生极性，再用皮肤自己的值覆盖，保住它的签名观感。
+   default（无 vars）返回 null，交回基础主题（:root + [data-theme=dark]）。 */
+function skinPalette(st, dark) {
+  var base = (st && st.vars) || {};
+  if (!Object.keys(base).length) return null;
+  var nativeLight = _lum(base["--bg"] || "#ffffff") > 0.5;
+  var full = flipSkin(base, dark);
+  if (nativeLight === (!dark)) { Object.keys(base).forEach(function (k) { full[k] = base[k]; }); }
+  return full;
+}
+function themeMode() {
+  var t = (data.settings && data.settings.theme) || "system";
+  if (t === "system") return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+  return t;
+}
 function applyStyle() {
   var st = HOMEPAGE_STYLES.find(function (s) { return s.id === (data.activeStyle || "default"); }) || HOMEPAGE_STYLES[0];
-  var root = document.documentElement;
-  STYLE_VARS.forEach(function (k) { root.style.setProperty(k, st.vars[k] || ""); });
+  var root = document.documentElement, dark = themeMode() === "dark";
+  var pal = skinPalette(st, dark);
+  if (!pal) { STYLE_VARS.forEach(function (k) { root.style.setProperty(k, ""); }); return; }
+  var full = {};
+  Object.keys(pal).forEach(function (k) { full[k] = pal[k]; });
+  Object.keys(ACCENT_FALLBACK).forEach(function (k) { if (!full[k]) full[k] = _retune(ACCENT_FALLBACK[k], dark ? 70 : 42); });
+  STYLE_VARS.forEach(function (k) { root.style.setProperty(k, full[k] || ""); });
 }
 function setTheme(mode) {
   data.settings.theme = mode; saveData();
-  if (mode === "system") {
-    var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-  } else {
-    document.documentElement.setAttribute("data-theme", mode);
-  }
+  document.documentElement.setAttribute("data-theme", themeMode());
   var tb = $("themeBtn"); if (tb) tb.textContent = (mode === "dark" ? "🌙" : mode === "light" ? "☀️" : "🌗");
+  applyStyle();   // 关键：切换昼夜后按新极性重算皮肤色板，皮肤与昼夜即可共存
 }
 function cycleTheme() {
   var cur = data.settings.theme || "system";
@@ -939,7 +1028,11 @@ function stat(v, k) { return '<div class="stat"><div class="v">' + esc(v) + '</d
 /* ===================== 渲染：交互式概念图 ===================== */
 var CMAP = window.AGENT_CONCEPT_MAP || { nodes: [], edges: [] };
 var cmapSel = null;                       // 当前聚焦的概念（null = 总图）
-var CMAP_CX = 330, CMAP_CY = 186, CMAP_R1 = 104, CMAP_R2 = 158;
+var CMAP_CX = 390, CMAP_CY = 210;
+/* 分层「椭圆环」：rx 宽、ry 矮 —— 版面宽而扁，才能在有限高度里放下更多节点 */
+var CMAP_RINGS = { 1: { rx: 126, ry: 84 }, 2: { rx: 246, ry: 128 }, 3: { rx: 338, ry: 194 } };
+/* 外环取相邻内环节角的「半个步长」（tier2 每格 36° → 18°），并把半径拉开，避免胶囊相互压叠 */
+var CMAP_OFFSET = { 1: 0, 2: 0, 3: Math.PI / 10 };
 function cmapLabel(id) { return termEn(id, "term") || id; }
 function cmapSub(id) {
   var x = TERMS.find(function (t2) { return t2.term === id; });
@@ -950,11 +1043,11 @@ function cmapLayout() {
   CMAP.nodes.forEach(function (n) { (byTier[n.tier] = byTier[n.tier] || []).push(n.id); });
   var pos = {};
   (byTier[0] || []).forEach(function (id) { pos[id] = { x: CMAP_CX, y: CMAP_CY }; });
-  [1, 2].forEach(function (t2) {
-    var list = byTier[t2] || [], r = (t2 === 1 ? CMAP_R1 : CMAP_R2);
+  Object.keys(CMAP_RINGS).forEach(function (t2) {
+    var list = byTier[t2] || [], R = CMAP_RINGS[t2];
     list.forEach(function (id, i) {
-      var ang = -Math.PI / 2 + (2 * Math.PI * i) / list.length;
-      pos[id] = { x: CMAP_CX + r * Math.cos(ang), y: CMAP_CY + r * Math.sin(ang) };
+      var ang = -Math.PI / 2 + (CMAP_OFFSET[t2] || 0) + (2 * Math.PI * i) / list.length;
+      pos[id] = { x: CMAP_CX + R.rx * Math.cos(ang), y: CMAP_CY + R.ry * Math.sin(ang) };
     });
   });
   return pos;
@@ -1156,25 +1249,37 @@ function renderLabs() {
 
 /* ===================== 渲染：测评 ===================== */
 var QUIZ = [], quizSel = {}, quizFill = {}, quizDone = false, quizScope = "all";
-/* scope = "all" 抽 12 题；scope = 章节 id 则用该章整库出题 */
+/* 题库抽题：全站从 84 题里抽 12；每章从该章 6 题里抽 4（题池必须 > 抽题数，否则抽题形同虚设） */
+var QUIZ_COUNT_ALL = 12, QUIZ_COUNT_CHAPTER = 4;
 function buildQuiz(scope) {
   var all = [];
   CUR.forEach(function (s) {
     if (scope && scope !== "all" && s.id !== scope) return;
     (s.quiz || []).forEach(function (q) { all.push(q); });
   });
+  var cap = (scope && scope !== "all") ? QUIZ_COUNT_CHAPTER : QUIZ_COUNT_ALL;
+  var N = Math.min(cap, all.length);
   var types = [];
   all.forEach(function (q) { if (types.indexOf(q.type) < 0) types.push(q.type); });
   var picked = [], seen = [];
-  types.forEach(function (tp) {
+  types.forEach(function (tp) {                    // 每种题型先保底抽 1 题，避免被随机淹没
     var pool = all.filter(function (q) { return q.type === tp; });
-    var p = shuffle(pool); if (p[0]) { picked.push(p[0]); seen.push(p[0]); }
+    var p = shuffle(pool);
+    if (p[0] && picked.length < N) { picked.push(p[0]); seen.push(p[0]); }
   });
   var rest = shuffle(all.filter(function (q) { return seen.indexOf(q) < 0; }));
-  var cap = (scope && scope !== "all") ? all.length : 12;
-  var N = Math.min(cap, all.length);
   while (picked.length < N && rest.length) picked.push(rest.shift());
-  return picked;
+  /* 选项乱序：给每题生成显示顺序 perm（= 原选项下标序列），并记下正确项的新位置 ca。
+     perm 同时用于中文与英文选项，保证两种语言下选项顺序一致。 */
+  return shuffle(picked).map(function (q) {
+    var o = q.o || [];
+    if (q.type === "fill" || o.length < 2) return { q: q, perm: null, opts: o, ca: q.a };
+    var idx = [], i;
+    for (i = 0; i < o.length; i++) idx.push(i);
+    var perm = shuffle(idx);
+    if (perm.join(",") === idx.join(",")) perm.push(perm.shift());   // 至少真的乱过一次
+    return { q: q, perm: perm, opts: perm.map(function (k) { return o[k]; }), ca: perm.indexOf(q.a) };
+  });
 }
 function quizScopeName() {
   if (quizScope === "all") return t("全站测评");
@@ -1187,16 +1292,19 @@ function renderQuizIntro() {
 function startQuiz(scope) {
   quizScope = scope || "all";
   QUIZ = buildQuiz(quizScope); quizSel = {}; quizFill = {}; quizDone = false;
-  var h = '<div class="quiz-scope">📝 ' + esc(quizScopeName()) + " · " + QUIZ.length + (LANG === "en" ? " questions" : " 题") + "</div>";
-  QUIZ.forEach(function (q, i) {
+  var h = '<div class="quiz-scope">📝 ' + esc(quizScopeName()) + " · " + QUIZ.length + (LANG === "en" ? " questions · options shuffled" : " 题 · 选项已随机打乱") + "</div>";
+  QUIZ.forEach(function (it, i) {
+    var q = it.q;
     var qEn = (LANG === "en" && window.AGENT_QUIZ_EN && window.AGENT_QUIZ_EN[q.q]) || null;
     var qText = qEn ? qEn.q : q.q;
     h += '<div class="quiz-q" id="qq-' + i + '"><div class="qt">' + (i + 1) + ". " + esc(qText) + "</div>";
     if (q.type === "fill") {
       h += '<input class="fill-input" id="qf-' + i + '" placeholder="' + (LANG === "en" ? "Type your answer..." : "输入答案...") + '" data-i18n-ph="' + (LANG === "en" ? "Type your answer..." : "输入答案...") + '">';
     } else {
-      var optsList = qEn ? qEn.o : (q.o || []);
-      optsList.forEach(function (opt, j) {
+      /* 显示顺序 = it.opts（已乱序）；英文选项按同一个 perm 重排，保证中英顺序一致 */
+      var disp = it.opts;
+      if (qEn && qEn.o && qEn.o.length === (q.o || []).length && it.perm) disp = it.perm.map(function (k) { return qEn.o[k]; });
+      disp.forEach(function (opt, j) {
         h += '<button class="opt" data-act="quiz-pick" data-q="' + i + '" data-o="' + j + '" id="qo-' + i + "-" + j + '">' + esc(opt) + "</button>";
       });
     }
@@ -1210,34 +1318,36 @@ function startQuiz(scope) {
 }
 function quizPick(i, j) {
   quizSel[i] = j;
-  var q = QUIZ[i];
-  (q.o || []).forEach(function (_, k) {
+  var it = QUIZ[i]; if (!it) return;
+  (it.opts || []).forEach(function (_, k) {
     var el = $("qo-" + i + "-" + k); if (el) el.classList.toggle("sel", k === j);
   });
 }
 function submitQuiz() {
   if (quizDone) return;
   var right = 0;
-  QUIZ.forEach(function (q, i) {
-    var ok = false, userVal = "";
+  QUIZ.forEach(function (it, i) {
+    var q = it.q, ok = false, userVal = "";
     if (q.type === "fill") {
       userVal = ($("qf-" + i) ? $("qf-" + i).value : "") || "";
       ok = normAns(userVal) === normAns(q.ans != null ? q.ans : q.a);   // 填空答案在 a（兼容 ans）
     } else {
       var pick = quizSel[i];
-      ok = (pick === q.a);
-      (q.o || []).forEach(function (_, k) {
+      ok = (pick === it.ca);                                            // 与乱序后的正确位置比较
+      (it.opts || []).forEach(function (_, k) {
         var el = $("qo-" + i + "-" + k); if (!el) return;
-        if (k === q.a) el.classList.add("right");
+        if (k === it.ca) el.classList.add("right");
         else if (k === pick) el.classList.add("wrong");
       });
     }
+    var userTxt = userVal || (it.opts && quizSel[i] != null ? it.opts[quizSel[i]] : "");
+    var rightTxt = q.type === "fill" ? (q.ans != null ? q.ans : q.a) : (it.opts ? it.opts[it.ca] : "");
     if (ok) right++;
-    else addMistake(q.q, userVal || (q.o && quizSel[i] != null ? q.o[quizSel[i]] : ""), q.type === "fill" ? (q.ans != null ? q.ans : q.a) : (q.o ? q.o[q.a] : ""));
+    else addMistake(q.q, userTxt, rightTxt);
     var w = $("qw-" + i);
     if (w) {
       w.style.display = "block";
-      w.innerHTML = (ok ? "✅ " + t("正确") : "❌ " + t("错误") + " · " + t("你的答案") + "：" + esc(userVal || (q.o ? q.o[quizSel[i]] : ""))) +
+      w.innerHTML = (ok ? "✅ " + t("正确") : "❌ " + t("错误") + " · " + t("你的答案") + "：" + esc(userTxt)) +
         "<br>" + (LANG === "en" ? "Explanation: " : "解析：") + esc(q.whyEn || q.why);
     }
   });
@@ -1295,6 +1405,7 @@ var NAV = [
   ["timerSec", "⏱️", "学习计时器"],
   ["tasksSec", "🎯", "今日任务"],
   ["chaptersSec", "📚", "课程全景"],
+  "__CHAPTERS__",
   ["reviewSec", "🔁", "复习队列"],
   ["mistakeSec", "📕", "错题本"],
   ["heatmapSec", "🔥", "学习热力图"],
@@ -1329,24 +1440,50 @@ function toggleSbCollapse() {
   document.body.classList.toggle("sbCollapsed");
   data.flags = data.flags || {}; data.flags.sbCollapsed = document.body.classList.contains("sbCollapsed"); saveData();
 }
+/* 侧边栏「课程目录」：可整体折叠，每章可再展开看课节（按真实章节顺序编号 1.1 / 1.2 …） */
+function sbChapterBlock(en) {
+  var flags = data.flags || {};
+  var collapsed = !!flags.sbChaptersCollapsed;
+  var openStage = flags.sbOpenStage || "";
+  var h = '<div class="sb-group-hd" data-act="sb-toggle-chapters" title="' +
+    (en ? "Expand / collapse the chapter list" : "展开 / 收起课程目录") + '">' +
+    '<span>📚 ' + (en ? "Chapters" : "课程目录") + "（" + CUR.length + "）</span>" +
+    '<span class="sb-caret">' + (collapsed ? "▸" : "▾") + "</span></div>";
+  if (collapsed) return h;
+  h += CUR.map(function (s, si) {
+    var ls = s.lessons || [];
+    var done = ls.filter(function (l) { return data.completed[l.id]; }).length;
+    var all = ls.length && done === ls.length;
+    var open = flags.sbOpenStage === s.id;
+    var row = '<div class="sb-item' + (open ? " on" : "") + '" data-act="sb-stage" data-id="' + s.id + '" title="' + esc(tn(s)) + '">' +
+      '<span class="sb-caret">' + (open ? "▾" : "▸") + "</span>" +
+      (all ? "✅" : (s.icon || "•")) + " " + (si + 1) + ". " + esc(tn(s)) +
+      ' <span style="opacity:.7">' + done + "/" + ls.length + "</span></div>";
+    if (open) {
+      row += '<div class="sb-lessons">' + ls.map(function (l, li) {
+        var ok = !!data.completed[l.id];
+        return '<div class="sb-lesson' + (ok ? " done" : "") + '" data-act="sb-lesson" data-id="' + l.id + '" title="' + esc(ln(l)) + '">' +
+          '<span class="n">' + (si + 1) + "." + (li + 1) + "</span><span>" + esc(ln(l)) + "</span>" +
+          (ok ? '<span class="ok">✓</span>' : "") + "</div>";
+      }).join("") + "</div>";
+    }
+    return row;
+  }).join("");
+  return h;
+}
 function renderSidebar() {
   var sb = $("sidebar"); if (!sb) return;
   var en = LANG === "en";
   var h = '<div class="sb-hd"><span>🧭 ' + (en ? "Navigation" : "导航") + "</span>" +
     '<button class="sb-nav" data-act="sb-collapse" style="width:auto;padding:2px 8px;font-size:11px" title="' + (en ? "Collapse sidebar" : "收起侧栏") + '">«</button></div>';
   h += '<div class="sb-sec">🧭 ' + (en ? "Page Sections" : "页面区块") + "</div>";
-  h += NAV.map(function (n) { return '<button class="sb-nav" data-act="sb-nav" data-target="' + n[0] + '">' + n[1] + " " + esc(t(n[2])) + "</button>"; }).join("");
-  h += '<div class="sb-sec">📚 ' + (en ? "Chapters" : "课程章节") + "（" + CUR.length + "）</div>";
-  h += CUR.map(function (s, si) {
-    var done = (s.lessons || []).filter(function (l) { return data.completed[l.id]; }).length;
-    var all = s.lessons && s.lessons.length && done === s.lessons.length;
-    var st = $("stage-" + s.id);
-    var cur = st && st.classList.contains("open");
-    return '<div class="sb-item' + (cur ? " on" : "") + '" data-act="sb" data-id="' + s.id + '" title="' + esc(tn(s)) + '">' +
-      (all ? "✅" : (s.icon || "•")) + " " + (si + 1) + ". " + esc(tn(s)) + ' <span style="opacity:.7">' + done + "/" + (s.lessons || []).length + "</span></div>";
-  }).join("");
+  NAV.forEach(function (n) {
+    if (n === "__CHAPTERS__") { h += sbChapterBlock(en); return; }   // 课程目录插在「课程全景」之后的真实位置
+    h += '<button class="sb-nav" data-act="sb-nav" data-target="' + n[0] + '">' + n[1] + " " + esc(t(n[2])) + "</button>";
+  });
   h += '<a class="sb-link" href="https://huangdouplone.github.io/R0-hello-world/" target="_blank" rel="noopener">🌱 R0:hello world · ' + (en ? "Programming from Zero" : "从零开始的编程之路") + "<small>huangdouplone.github.io/R0-hello-world</small></a>";
   h += '<a class="sb-link" href="https://huangdouplone.github.io/R0-hello-agi/" target="_blank" rel="noopener">🔗 R0:hello agi · ' + (en ? "AGI from Zero" : "从零开始的 AGI 之路") + "<small>huangdouplone.github.io/R0-hello-agi</small></a>";
+  h += '<a class="sb-link" href="https://huangdouplone.github.io/R0-hello-office/" target="_blank" rel="noopener">🗂️ R0:hello office · ' + (en ? "Office from Zero" : "从0开始的Office") + "<small>" + "https://huangdouplone.github.io/R0-hello-office/" + "</small></a>";
   sb.innerHTML = h;
   ensureResizer();
   updateSbSpy();
@@ -1424,6 +1561,15 @@ document.addEventListener("click", function (e) {
   else if (act === "theme") { cycleTheme(); }
   else if (act === "goto") { var sec = $(id); if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" }); closeSidebar(); }
   else if (act === "sb-nav") { var tgt = $(el.dataset.target); if (tgt) tgt.scrollIntoView({ behavior: "smooth", block: "start" }); closeSidebar(); }
+  else if (act === "sb-toggle-chapters") { data.flags = data.flags || {}; data.flags.sbChaptersCollapsed = !(data.flags && data.flags.sbChaptersCollapsed); saveData(); renderSidebar(); }
+  else if (act === "sb-stage") {
+    data.flags = data.flags || {};
+    var wasOpen = data.flags.sbOpenStage === id;
+    data.flags.sbOpenStage = wasOpen ? "" : id;
+    saveData(); renderSidebar();
+    if (!wasOpen) { var stg = $("stage-" + id); if (stg) { stg.classList.add("open"); stg.scrollIntoView({ behavior: "smooth", block: "start" }); } }
+  }
+  else if (act === "sb-lesson") { openLesson(id); closeSidebar(); }
   else if (act === "sb") { var stg = $("stage-" + id); if (stg) { stg.classList.add("open"); stg.scrollIntoView({ behavior: "smooth", block: "start" }); } closeSidebar(); }
   else if (act === "sb-collapse") { toggleSbCollapse(); }
   else if (act === "to-top") { try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (err) { window.scrollTo(0, 0); } }

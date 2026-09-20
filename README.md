@@ -29,12 +29,12 @@
 
 | 指标 | 数值 |
 | --- | --- |
-| 章节 / 课节 | **14 / 71** |
-| 阶段测评题 | **56**（choice 28 · judge 14 · fill 14） |
+| 章节 / 课节 | **14 / 77** |
+| 阶段测评题 | **57**（choice 29 · judge 14 · fill 14） |
 | 抽题数 | 全站 12 题；**每章另有独立测评**（用该章整库出题，记录最高分） |
 | 动手实战 | **14** |
-| 名词库 | **28 条**（分 5 类：基础 / 生态与工具 / 微调与进阶 / 安全与风险 / 工程与运维），支持搜索 + 默认 9 条折叠 |
-| 概念地图 | **16 节点 / 20 关系**，可交互（总图 ↔ 单点聚焦） |
+| 名词库 | **42 条**（分 5 类：基础 14 / 生态与工具 18 / 微调与进阶 4 / 安全与风险 3 / 工程与运维 3），支持搜索 + 默认 9 条折叠 |
+| 概念地图 | **22 节点 / 30 关系**，可交互（总图 ↔ 单点聚焦）；MCP 生态单独成环（Server / Tools / Resources / Prompts / Client） |
 | 端到端工作流 | **8 步** + 一条完整示例 |
 | 主页配色风格 | **16 套**（1 套默认 + 15 套星币解锁） |
 | 成就徽章 | **10** |
@@ -45,17 +45,17 @@
 | --- | --- | ---: | ---: |
 | c1 | 🧠 大模型是什么 | 5 | 4 |
 | c2 | 🔑 通过 API 使用大模型 | 5 | 4 |
-| c3 | 🖥️ 本地部署大模型 | 5 | 4 |
+| c3 | 🖥️ 本地部署大模型 | 6 | 4 |
 | c4 | 🗣️ 提示词工程 | 6 | 4 |
 | c5 | 📚 检索增强 RAG | 4 | 4 |
-| c6 | 🔌 MCP 协议 | 5 | 4 |
-| c7 | 🤖 Agent 智能体 | 5 | 4 |
+| c6 | 🔌 MCP 协议 | **8** | **5** |
+| c7 | 🤖 Agent 智能体 | 6 | 4 |
 | c8 | 🧰 环境与工具准备 | 5 | 4 |
 | c9 | 💰 成本、延迟与模型选型 | 5 | 4 |
 | c10 | 🛡️ 安全、隐私与护栏 | 5 | 4 |
 | c11 | 📐 输出质量与评估 | 5 | 4 |
 | c12 | 🎛️ 微调、蒸馏与多模态 | 5 | 4 |
-| c13 | 🚀 上线：把原型变成日常工具 | 5 | 4 |
+| c13 | 🚀 上线：把原型变成日常工具 | 6 | 4 |
 | c14 | 🧩 扩展机制：Skill / 插件 / 钩子 / 命令 | 6 | 4 |
 
 课程节奏分三段：**c1–c3 打地基**（是什么 / 怎么调 / 怎么本地跑）→ **c4–c7 会用**（提示词 / RAG / MCP / Agent）→ **c8–c14 落地**（环境 / 成本 / 安全 / 评估 / 进阶 / 上线 / 扩展机制）。
@@ -64,8 +64,8 @@
 
 | 模块 | 说明 |
 | --- | --- |
-| 交互式概念地图 | SVG 绘制 16 个概念 / 20 条关系；默认「总图」，点 chip 或节点即聚焦该点及其关系（其余淡出、边带标签） |
-| 名词库 | 28 条按 5 类归组；默认只渲染 9 条（3 排）可一键展开；顶部搜索框实时过滤（命中即忽略折叠与分类） |
+| 交互式概念地图 | SVG 绘制 22 个概念 / 30 条关系；默认「总图」，点 chip 或节点即聚焦该点及其关系（其余淡出、边带标签） |
+| 名词库 | 42 条按 5 类归组；默认只渲染 9 条（3 排）可一键展开；顶部搜索框实时过滤（命中即忽略折叠与分类） |
 | 今日任务双层圆盘 | 外环 = 今日新学配额、内环 = 复习进度（SVG `stroke-dashoffset`）；右侧列表按「新学 / 复习」分标签，可直接跳转课节或标记已复习 |
 | 断点续学 | 打开课节即写入 `data.last {lesson,stage,ts}`；头部下方常驻续学条，一键回到断点（已学完则自动跳到下一未完成课节） |
 | 章节测评 | 每章卡片内「章节测评」按钮，用该章题库出题（choice/judge/fill），最高分 `data.quizBest["stage:<id>"]` 显示在章卡徽章上 |
@@ -214,12 +214,12 @@ python -m http.server 8080
 
 | Metric | Value |
 | --- | --- |
-| Chapters / lessons | **14 / 71** |
-| Quiz questions | **56** (choice 28 · judge 14 · fill 14) |
+| Chapters / lessons | **14 / 77** |
+| Quiz questions | **57** (choice 29 · judge 14 · fill 14) |
 | Quiz length | 12 site-wide; **plus a per-chapter quiz** drawn from that chapter's full bank |
 | Hands-on labs | **14** |
-| Term library | **28 entries** in 5 categories, with search and a 9-item collapsed default |
-| Concept map | **16 nodes / 20 relations**, interactive (overview ↔ focus) |
+| Term library | **42 entries** in 5 categories, with search and a 9-item collapsed default |
+| Concept map | **22 nodes / 30 relations**, interactive (overview ↔ focus) |
 | Workflow | **8 steps** + a full example |
 | Homepage themes | **16** (1 default + 15 coin-unlocked) |
 | Achievements | **10** |
@@ -227,7 +227,7 @@ python -m http.server 8080
 ### 3. Architecture
 
 - **Single source of truth for English**: `*_en` fields in the data files; `lang-en.js` only derives id-indexed maps (no duplicated literals); missing fields fall back to Chinese.
-- **Overlay pattern**: new chapters/labs/terms are appended via `agent-extra-data2.js` at startup, keeping the original data file stable and **existing progress keys untouched**.
+- **Overlay pattern**: new chapters, lessons, quizzes, labs and terms are all appended via `agent-extra-data2.js` at startup (it also rebuilds the derived EN title maps), keeping the original data files stable and **existing progress keys untouched**.
 - **UI i18n**: `t(zh)` — the Chinese string is the key; `I18N_EN` supplies English.
 - **Copyright in code blocks**: injected as `<span class="cr-attr">` (`display:none`) so it is invisible on the page but travels with copy-paste.
 
