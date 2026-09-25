@@ -4,12 +4,12 @@
  * 隶属 / Series:        隶属于拾色造梦企划 EDU 系列
  * 通过 http(s) 托管本目录时自动生效；file:// 直接打开时浏览器会拒绝注册，属正常现象。
  */
-const CACHE = "r0-hello-agent-v14";
+const CACHE = "r0-hello-agent-v26";
 /* ASSETS 必须与 index.html 里 <script src> 的 URL 逐字符一致（含 ?v=N 查询串）：
    缓存以「完整请求 URL」为键，裸文件名匹配不上带查询串的请求，会导致离线时取不到这些资源。 */
 const ASSETS = [
   "./", "index.html",
-  "agent-extra-data.js?v=6", "lang-en.js?v=3", "lang-en-content.js?v=14", "agent-extra-data2.js?v=5",
+  "agent-extra-data.js?v=6", "lang-en.js?v=3", "lang-en-content.js?v=14", "agent-extra-data2.js?v=6", "agent-deepen-a.js?v=1", "agent-deepen-b.js?v=1", "agent-deepen-c.js?v=1",
   "agent-sw.js", "README.md", "LICENSE.md"
 ];
 self.addEventListener("install", function (e) {

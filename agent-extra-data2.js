@@ -1193,7 +1193,22 @@ var TERM_DETAIL_EN = {
   "Chunking": ["Often 300–800 characters per chunk with slight overlap.", "Chunking strategy usually matters more than the model you pick."],
   "Agent Loop": ["Each round: decide an action → execute → read the result → decide again.", "Always set a termination condition and a max-step cap."],
   "Human-in-the-loop": ["Transfers, deletions and outbound sends must be approved.", "Keep confirmation points few and sharp, or users click through blindly."],
-  "Grounding": ["Grounding is the end goal of RAG.", "Cite sources so answers can be verified and audited."]
+  "Grounding": ["Grounding is the end goal of RAG.", "Cite sources so answers can be verified and audited."],
+  /* B12：以下词条由 agent-deepen-* 层追加，英文侧表此前漏配，英文模式下回落到中文 */
+  "少样本示例": ["Examples must follow one consistent standard, or the model learns noise.", "Include edge cases that define the expected behaviour on abnormal input."],
+  "Chain of Thought": ["Break a one-shot guess into small steps that can each be verified.", "Skip it on simple tasks: it is slower and costs more."],
+  "幻觉": ["Most common with time-sensitive facts, private knowledge and long-tail details.", "Countermeasures: retrieval, required citations, and allowing 'I don't know'."],
+  "切片": ["A common range is 300–800 characters with slight overlap between neighbours.", "Splitting on structure (headings / paragraphs) beats splitting on raw character counts."],
+  "ReAct": ["Never drop the Observation step — it is what the next step reasons from.", "The loop needs exits: task done, max steps reached, repeated failure."],
+  "自我纠错": ["Especially effective on format tasks (pass the schema along with the request).", "It does not replace programmatic validation, and it roughly doubles cost."],
+  "提示词版本管理": ["Every change must run against the eval set and be compared by numbers.", "Change in small steps — one variable at a time."],
+  "指数退避": ["A typical sequence is 1s, 2s, 4s, 8s… plus random jitter.", "Never retry 400 parameter errors; retry only 429, 5xx and timeouts."],
+  "幂等性": ["The safety precondition for automation: a job may fire twice without harm.", "How to get it: unique IDs, deduplication keys, state checks."],
+  "LLM-as-Judge": ["The rubric must state its dimensions and scoring criteria explicitly.", "Manage bias — position and length preference — by swapping order and using multiple judges."],
+  "蒸馏": ["Cheap to train and fast to run; suits vertical tasks with clear boundaries.", "The student inherits the teacher's mistakes, so generated data must be cleaned."],
+  "QLoRA": ["VRAM ≈ a 4-bit base model plus adapter and optimizer state.", "Hyperparameters: learning rate around 1e-4, 1–3 epochs."],
+  "灰度发布": ["AI failures usually surface only under real inputs.", "Roll out gradually by user share, channel or region."],
+  "扩展机制": ["Four kinds: Skill (procedure), Plugin (external systems), Hook (event-driven automation), Command (shortcut).", "Choose by asking who triggers it first, then what is being extended."]
 };
 
 /* ============================================================
