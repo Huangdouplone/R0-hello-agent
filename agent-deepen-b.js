@@ -19,9 +19,9 @@ const DEEPEN_AGENT_B = {
     "c4l1": {
       title: "系统提示与角色设定", title_en: "System Prompts & Role Setting",
       summary: [
-        "系统提示（system）位于 messages 数组开头，对整轮对话持续生效——它是**最稳定的约束位置**，规则应该写在这里而不是 user 消息里。",
-        "角色设定的作用是**缩小输出分布**：同样是解释概念，「面向小学生」和「面向资深工程师」的答案完全不同。",
-        "一个能用的系统提示骨架：**身份 + 能力边界 + 输出格式 + 禁止事项**，四块各占两三行即可，不必长篇大论。",
+        "系统提示（system）位于 messages 数组开头，对整轮对话持续生效——它是最稳定的约束位置，规则应该写在这里而不是 user 消息里。",
+        "角色设定的作用是缩小输出分布：同样是解释概念，「面向小学生」和「面向资深工程师」的答案完全不同。",
+        "一个能用的系统提示骨架：身份 + 能力边界 + 输出格式 + 禁止事项，四块各占两三行即可，不必长篇大论。",
         "把「不变的规则」放 system、「每次变化的内容」放 user——改任务时不必重发规则，也更省 token。",
         "角色要具体：不说「你是助手」，而说「你是处理客服工单的助手，只回答与工单相关的问题」。",
         "多轮裁剪历史时 system 必须保留——它被裁掉后，模型表现会突然「变松」，这类回归很难排查。",
@@ -50,21 +50,21 @@ const DEEPEN_AGENT_B = {
     "c4l2": {
       title: "少样本与结构化输出", title_en: "Few-shot & Structured Output",
       summary: [
-        "少样本（few-shot）是在提示里给 2~5 个**输入→输出**的例子，让模型照着做——比描述规则更直观，尤其适合难以言传的格式与判断尺度。",
-        "例子的质量比数量重要：例子之间必须**一致**（同样的格式、同样的判断标准），否则模型学到的是噪声。",
+        "少样本（few-shot）是在提示里给 2~5 个输入→输出的例子，让模型照着做——比描述规则更直观，尤其适合难以言传的格式与判断尺度。",
+        "例子的质量比数量重要：例子之间必须一致（同样的格式、同样的判断标准），否则模型学到的是噪声。",
         "要覆盖边界：除了典型样例，再给一个「异常输入」的例子，模型才知道特殊情况该怎么处理。",
-        "想要结构化输出（JSON）有三层手段：**明确 schema** → **少样本示例** → **JSON 模式/函数调用**（能力允许时最稳）。",
+        "想要结构化输出（JSON）有三层手段：明确 schema → 少样本示例 → JSON 模式/函数调用（能力允许时最稳）。",
         "必须在提示里禁止多余文字（「只输出 JSON，不要解释、不要代码块」），否则常会得到被反引号包裹的内容。",
-        "代码侧必须兜底：**解析失败要带着错误信息重试**，让模型自己修正；重试要有上限（c11）。",
+        "代码侧必须兜底：解析失败要带着错误信息重试，让模型自己修正；重试要有上限（c11）。",
         "注意成本：每个例子都占上下文并被反复计费——例子够用即可，不必堆很多。"
       ],
       summary_en: [
-        "Few-shot gives 2–5 **input→output** examples for the model to copy — often clearer than describing rules, especially for formats and judgement scales.",
-        "Quality beats quantity: examples must be **consistent**, or the model learns noise.",
+        "Few-shot gives 2–5 input→output examples for the model to copy — often clearer than describing rules, especially for formats and judgement scales.",
+        "Quality beats quantity: examples must be consistent, or the model learns noise.",
         "Cover edges: add one abnormal input so the model knows how to handle exceptions.",
-        "Three layers for structured output: **explicit schema** → **few-shot examples** → **JSON mode / function calling** (most reliable when available).",
+        "Three layers for structured output: explicit schema → few-shot examples → JSON mode / function calling (most reliable when available).",
         "Forbid extra text ('only JSON, no explanation, no code fences'), or you get fenced blocks.",
-        "Handle failures in code: **retry with the parse error included**, with a cap (c11).",
+        "Handle failures in code: retry with the parse error included, with a cap (c11).",
         "Mind cost: examples consume context and are billed every call."
       ],
       code: "把句子按情绪分类，只输出：正面 / 负面 / 中性\n\n句子：这个更新太好用了 → 正面\n句子：又崩了，烦死了   → 负面\n句子：会议改到下午三点 → 中性\n句子：<待分类>        →",
@@ -81,20 +81,20 @@ const DEEPEN_AGENT_B = {
     "c4l3": {
       title: "思维链与分解任务", title_en: "Chain of Thought & Task Decomposition",
       summary: [
-        "思维链（CoT）是**要求模型先写出推理过程再给结论**，能显著提升数学、逻辑与多步判断类问题的准确率。",
+        "思维链（CoT）是要求模型先写出推理过程再给结论，能显著提升数学、逻辑与多步判断类问题的准确率。",
         "它有效的直觉：直接给答案等于让模型一步猜中；写出来等于把困难问题拆成若干容易的小步。",
         "最简形式是加一句「请一步步推理后再给结论」；更强的形式是先给一个带推理过程的示例。",
         "任务分解是同一思想的工程化：把一个大问题拆成多个子问题分别调用，再汇总——比一个巨型提示更可控。",
-        "代价是输出更长（更多 token、更慢、更贵），所以**简单任务不要用**——只对确实需要推理的任务开。",
+        "代价是输出更长（更多 token、更慢、更贵），所以简单任务不要用——只对确实需要推理的任务开。",
         "若要程序解析，要求「最后一行用固定格式给出结论」，把推理与结论分开。",
         "注意它不消除幻觉：推理写得再顺，也可能基于错误前提；关键结论仍要校验。"
       ],
       summary_en: [
-        "Chain of thought asks the model to **write the reasoning before the conclusion**, improving accuracy on maths, logic and multi-step judgement.",
+        "Chain of thought asks the model to write the reasoning before the conclusion, improving accuracy on maths, logic and multi-step judgement.",
         "Why it works: answering directly is one hard guess; writing steps decomposes it into easy ones.",
         "Simplest form: 'think step by step, then conclude'; stronger: show an example with reasoning.",
         "Task decomposition is the engineering version: split a big problem into sub-calls and aggregate — more controllable than one giant prompt.",
-        "The cost is longer output (more tokens, slower, pricier) — **skip it for simple tasks**.",
+        "The cost is longer output (more tokens, slower, pricier) — skip it for simple tasks.",
         "For parsing, require 'the final answer in a fixed format on the last line'.",
         "It does not remove hallucination: fluent reasoning can rest on false premises."
       ],
@@ -112,21 +112,21 @@ const DEEPEN_AGENT_B = {
     "c4l4": {
       title: "提示词的常见坑", title_en: "Common Prompting Pitfalls",
       summary: [
-        "坑一：**指令与数据混在一起**——要处理的外部文本里藏着指令，模型可能照着执行（提示注入，见 c10）。",
-        "坑二：**一次要太多**——一个提示里塞五个任务，每个都做不精；拆成多次调用，每次专注一件事。",
-        "坑三：**约束缺失或互相矛盾**——「要详细」和「控制在 50 字以内」同时出现，模型只能随机选一个遵守。",
-        "坑四：**负面指令太多**——「不要 X、不要 Y」列一长串，不如正面说清「应该做什么」。",
-        "坑五：**关键信息埋在中段**——长提示的中间最容易被忽略，关键约束应放开头或结尾。",
-        "坑六：**把示例和真数据混在一起**——分隔符不清晰时，模型会把示例当成待处理内容。",
+        "坑一：指令与数据混在一起——要处理的外部文本里藏着指令，模型可能照着执行（提示注入，见 c10）。",
+        "坑二：一次要太多——一个提示里塞五个任务，每个都做不精；拆成多次调用，每次专注一件事。",
+        "坑三：约束缺失或互相矛盾——「要详细」和「控制在 50 字以内」同时出现，模型只能随机选一个遵守。",
+        "坑四：负面指令太多——「不要 X、不要 Y」列一长串，不如正面说清「应该做什么」。",
+        "坑五：关键信息埋在中段——长提示的中间最容易被忽略，关键约束应放开头或结尾。",
+        "坑六：把示例和真数据混在一起——分隔符不清晰时，模型会把示例当成待处理内容。",
         "排查方法：把提示当作「给新同事的交接文档」重读一遍——如果新人会误解，模型也会。"
       ],
       summary_en: [
-        "Pit 1: **instructions mixed with data** — external text containing instructions may be followed (prompt injection, see c10).",
-        "Pit 2: **asking for too much at once** — five tasks in one prompt are all done poorly; split into calls.",
-        "Pit 3: **missing or contradictory constraints** — 'be detailed' and 'under 50 words' cannot both hold.",
-        "Pit 4: **too many negative instructions** — a long list of 'don't' is weaker than saying what to do.",
-        "Pit 5: **key information buried in the middle** — long prompts neglect the middle; put constraints at the edges.",
-        "Pit 6: **examples mixed with real data** — without clear delimiters the model treats examples as input.",
+        "Pit 1: instructions mixed with data — external text containing instructions may be followed (prompt injection, see c10).",
+        "Pit 2: asking for too much at once — five tasks in one prompt are all done poorly; split into calls.",
+        "Pit 3: missing or contradictory constraints — 'be detailed' and 'under 50 words' cannot both hold.",
+        "Pit 4: too many negative instructions — a long list of 'don't' is weaker than saying what to do.",
+        "Pit 5: key information buried in the middle — long prompts neglect the middle; put constraints at the edges.",
+        "Pit 6: examples mixed with real data — without clear delimiters the model treats examples as input.",
         "Debug: reread the prompt as a handover document for a new colleague — if they would misunderstand, so will the model."
       ],
       code: "反例：请总结这篇文章，要详细，但控制在 50 字以内，不要遗漏任何要点。\n正例：请用 50 字以内总结这篇文章的核心结论；只保留与结论直接相关的信息。",
@@ -143,15 +143,15 @@ const DEEPEN_AGENT_B = {
     "c4l5": {
       title: "反思与自我纠错：让模型自己检查答案", title_en: "Reflection & Self-correction",
       summary: [
-        "反思（reflection）是让模型**对自己的输出做一次检查**：找出错误、遗漏或不符合格式的地方，再给出修正版。",
+        "反思（reflection）是让模型对自己的输出做一次检查：找出错误、遗漏或不符合格式的地方，再给出修正版。",
         "最简单的实现是两步调用：第一步生成 → 第二步把「输出 + 检查清单」一起发给模型，请它批评并重写。",
         "对格式类任务特别有效：把 schema 一起给过去，让模型自己核对字段是否齐全、类型是否正确。",
         "它不能替代真正的校验：模型检查自己也可能漏——程序侧的 schema 校验仍然是底线。",
-        "成本会翻倍（多一次调用），所以**只对高价值或易错的任务启用**。",
+        "成本会翻倍（多一次调用），所以只对高价值或易错的任务启用。",
         "进阶形态是「批评者模型」：用另一个模型（或另一次独立调用）来审查输出，避免「自己查自己」的盲区。"
       ],
       summary_en: [
-        "Reflection asks the model to **review its own output**: find errors, omissions or format violations, then produce a corrected version.",
+        "Reflection asks the model to review its own output: find errors, omissions or format violations, then produce a corrected version.",
         "Simplest form is a second call: send the output plus a checklist and ask it to critique and rewrite.",
         "Especially effective for format tasks: pass the schema along so the model checks fields and types itself.",
         "It does not replace real validation — the model can miss things too; program-side schema checks remain the floor.",
@@ -172,15 +172,15 @@ const DEEPEN_AGENT_B = {
     "c4l6": {
       title: "提示词版本管理与 A/B 测试", title_en: "Prompt Versioning & A/B Testing",
       summary: [
-        "提示词就是**代码**：它决定输出行为，因此需要和代码一样做版本管理（存档、可回滚、可追溯）。",
+        "提示词就是代码：它决定输出行为，因此需要和代码一样做版本管理（存档、可回滚、可追溯）。",
         "最低要求：把提示存成独立文件（或常量模块），标注版本号与修改原因，不要散落在业务代码里。",
-        "改提示必须**跑评测集**（c11）：同一批样例、同一套标准，改前改后各跑一遍，用数字说话而不是凭感觉。",
+        "改提示必须跑评测集（c11）：同一批样例、同一套标准，改前改后各跑一遍，用数字说话而不是凭感觉。",
         "A/B 测试的做法：新旧两版各跑一半流量（或各跑同一评测集），比较成功率、格式合规率与成本。",
         "注意过拟合：在评测集上反复调优会「背答案」，要留出一部分从未参与调优的样例做复验。",
         "改动要小步：一次只改一处（加一条规则、换一个示例），否则无法归因是哪个改动带来的变化。"
       ],
       summary_en: [
-        "A prompt is **code**: it determines behaviour, so version it like code (archived, rollback-able, traceable).",
+        "A prompt is code: it determines behaviour, so version it like code (archived, rollback-able, traceable).",
         "Minimum: store prompts in dedicated files (or constant modules) with version numbers and change reasons, not scattered in business logic.",
         "Every change must run the evaluation set (c11): same samples, same criteria, before and after — numbers, not vibes.",
         "A/B: run old and new versions on half the traffic each (or the same eval set), comparing success rate, format compliance and cost.",
@@ -202,20 +202,20 @@ const DEEPEN_AGENT_B = {
     "c5l1": {
       title: "为什么模型会“瞎编“——幻觉", title_en: "Why Models Hallucinate",
       summary: [
-        "幻觉的根源在机制：模型是**按概率生成**，不是按事实检索——当训练数据里没有可靠依据时，它仍会给出「语言上合理」的回答。",
-        "三类高发场景：**训练截止后的事实**（时效）、**私有知识**（公司内部资料）、**长尾细节**（具体数字、引用、姓名）。",
-        "「语言上合理」是关键：幻觉的句子通常语法通顺、结构完整，**无法从表面分辨真假**——所以不能靠读起来可不可信来判断。",
-        "降低幻觉的三个手段：**检索增强**（给依据，c5）、**要求引用**（答案必须标注来源）、**允许说不知道**（明确告诉模型「没有依据就承认」）。",
+        "幻觉的根源在机制：模型是按概率生成，不是按事实检索——当训练数据里没有可靠依据时，它仍会给出「语言上合理」的回答。",
+        "三类高发场景：训练截止后的事实（时效）、私有知识（公司内部资料）、长尾细节（具体数字、引用、姓名）。",
+        "「语言上合理」是关键：幻觉的句子通常语法通顺、结构完整，无法从表面分辨真假——所以不能靠读起来可不可信来判断。",
+        "降低幻觉的三个手段：检索增强（给依据，c5）、要求引用（答案必须标注来源）、允许说不知道（明确告诉模型「没有依据就承认」）。",
         "提问方式也有影响：诱导性问题（「为什么 X 是对的」）会推着模型顺着错误前提编造；开放式提问更安全。",
-        "高风险场景（医疗、法律、财务、代码删除操作）必须**强制引用 + 人工复核**，不能裸用。"
+        "高风险场景（医疗、法律、财务、代码删除操作）必须强制引用 + 人工复核，不能裸用。"
       ],
       summary_en: [
-        "Hallucination is mechanistic: the model **generates by probability**, not by looking up facts — without reliable grounding it still produces plausible text.",
-        "Three high-risk areas: **post-cutoff facts**, **private knowledge**, and **long-tail details** (exact numbers, citations, names).",
-        "Plausibility is the trap: hallucinated sentences are grammatical and well-structured, **indistinguishable by reading** — never judge by tone.",
-        "Three mitigations: **retrieval** (provide grounding, c5), **require citations**, and **allow 'I don't know'**.",
+        "Hallucination is mechanistic: the model generates by probability, not by looking up facts — without reliable grounding it still produces plausible text.",
+        "Three high-risk areas: post-cutoff facts, private knowledge, and long-tail details (exact numbers, citations, names).",
+        "Plausibility is the trap: hallucinated sentences are grammatical and well-structured, indistinguishable by reading — never judge by tone.",
+        "Three mitigations: retrieval (provide grounding, c5), require citations, and allow 'I don't know'.",
         "Prompting matters: leading questions ('why is X correct') push the model to elaborate a false premise; open questions are safer.",
-        "High-stakes domains (medical, legal, financial, destructive code ops) require **mandatory citations plus human review**."
+        "High-stakes domains (medical, legal, financial, destructive code ops) require mandatory citations plus human review."
       ],
       code: "系统提示追加：\n只依据提供的资料回答；资料中没有的信息，回答「资料中未提及」。\n引用格式：[来源: 文件名#段落]",
       pit: "用「读起来顺不顺」判断答案真假——幻觉恰恰以通顺著称；唯一可靠的是核对依据与来源。",
@@ -231,19 +231,19 @@ const DEEPEN_AGENT_B = {
     "c5l2": {
       title: "切片、向量化与向量库", title_en: "Chunking, Embeddings & Vector Stores",
       summary: [
-        "RAG 的检索通常不是关键词匹配，而是**语义检索**：文本转成向量（embedding），按相似度找最相关的片段。",
+        "RAG 的检索通常不是关键词匹配，而是语义检索：文本转成向量（embedding），按相似度找最相关的片段。",
         "直觉：语义相近的文字在向量空间里也相近，所以「怎么退款」能匹配到「退货流程说明」——关键词匹配做不到。",
-        "离线流程：资料 → **切片** → 每片算向量 → 存入向量库；在线流程：问题转向量 → 相似度检索 → 取 top-k 片段。",
+        "离线流程：资料 → 切片 → 每片算向量 → 存入向量库；在线流程：问题转向量 → 相似度检索 → 取 top-k 片段。",
         "切片往往比换模型更影响效果：太长会稀释相关性，太短会丢失上下文；常见做法 300~800 字 + 相邻段重叠。",
-        "更好的切片是**按结构切**（标题、段落、列表），并给每片带上元信息（来源、标题、更新时间）便于过滤与引用。",
+        "更好的切片是按结构切（标题、段落、列表），并给每片带上元信息（来源、标题、更新时间）便于过滤与引用。",
         "embedding 模型与生成模型是两个模型：前者负责检索，后者负责作答；换 embedding 模型是第二步优化。"
       ],
       summary_en: [
-        "RAG retrieval is usually **semantic**: text becomes vectors (embeddings) and the nearest fragments win.",
+        "RAG retrieval is usually semantic: text becomes vectors (embeddings) and the nearest fragments win.",
         "Intuition: similar meanings sit close in vector space, so 'how to get a refund' matches 'returns policy'.",
-        "Offline: documents → **chunks** → embeddings → vector store. Online: embed the question → similarity search → top-k fragments.",
+        "Offline: documents → chunks → embeddings → vector store. Online: embed the question → similarity search → top-k fragments.",
         "Chunking often matters more than the model: too long dilutes relevance, too short loses context; 300–800 characters with overlap is common.",
-        "Better: **chunk along structure** (headings, paragraphs, lists) with metadata (source, heading, updated time) for filtering and citation.",
+        "Better: chunk along structure (headings, paragraphs, lists) with metadata (source, heading, updated time) for filtering and citation.",
         "The embedding model differs from the generation model: one retrieves, the other answers; swapping embeddings is a second-order optimisation."
       ],
       code: "离线：文档 → 切片 → embedding → 向量库\n在线：问题 → embedding → top-k 检索 → 拼进上下文 → 生成",
@@ -260,20 +260,20 @@ const DEEPEN_AGENT_B = {
     "c5l3": {
       title: "检索—拼接—生成 三步流程", title_en: "Retrieve → Assemble → Generate",
       summary: [
-        "标准 RAG 是三步：**检索**（按问题找相关片段）→ **拼接**（把片段与问题一起放进上下文）→ **生成**（基于资料回答）。",
+        "标准 RAG 是三步：检索（按问题找相关片段）→ 拼接（把片段与问题一起放进上下文）→ 生成（基于资料回答）。",
         "拼接有讲究：片段要标序号与来源，并明确告诉模型「只依据这些资料回答，资料中没有就说没有」。",
         "拼接顺序影响效果：最相关的片段放开头或结尾（注意力强的位置），并控制总长度不超窗口。",
-        "生成时要要求**引用格式**（如 [1][2]），让答案可追溯到具体片段——这是「可信」的关键。",
+        "生成时要要求引用格式（如 [1][2]），让答案可追溯到具体片段——这是「可信」的关键。",
         "检索质量是上限：检索不到就生成不好；所以宁可在检索端多投入（更好的切片、重排），也不要只调生成端。",
-        "进阶优化是**重排（rerank）**：先粗检索 top-20，再用重排模型精选 top-3，效果通常明显提升。"
+        "进阶优化是重排（rerank）：先粗检索 top-20，再用重排模型精选 top-3，效果通常明显提升。"
       ],
       summary_en: [
-        "Standard RAG is three steps: **retrieve** (find relevant fragments) → **assemble** (place fragments and the question in context) → **generate** (answer from them).",
+        "Standard RAG is three steps: retrieve (find relevant fragments) → assemble (place fragments and the question in context) → generate (answer from them).",
         "Assembly matters: number the fragments with sources, and instruct 'answer only from these; say so if absent'.",
         "Order affects quality: most relevant fragments at the start or end (strong attention positions), within the window.",
-        "Require a **citation format** ([1][2]) so answers are traceable to fragments — the key to trustworthiness.",
+        "Require a citation format ([1][2]) so answers are traceable to fragments — the key to trustworthiness.",
         "Retrieval quality is the ceiling: bad retrieval cannot be fixed by generation; invest on the retrieval side first.",
-        "Advanced: **reranking** — coarse top-20 first, then a reranker picks top-3, usually a clear improvement."
+        "Advanced: reranking — coarse top-20 first, then a reranker picks top-3, usually a clear improvement."
       ],
       code: "上下文模板：\n【资料 1】(来源: refund.md#3)\n<片段内容>\n…\n【问题】<用户问题>\n【要求】只依据上述资料回答；没有依据就回答「资料中未提及」，并标注引用 [n]。",
       pit: "把检索结果不做标注直接拼进去——模型无法区分「依据」和「普通文本」，也不会给引用，答案可信度无从核对。",
@@ -289,17 +289,17 @@ const DEEPEN_AGENT_B = {
     "c5l4": {
       title: "RAG 的边界与成本", title_en: "RAG: Limits & Costs",
       summary: [
-        "RAG 不是万能的：**检索不到就答不好**——资料没入库、切片切坏、查询与资料用词差异大，都会导致失败。",
+        "RAG 不是万能的：检索不到就答不好——资料没入库、切片切坏、查询与资料用词差异大，都会导致失败。",
         "成本构成比看上去高：需要 embedding、向量库、切片与索引维护，还有每次查询的检索与更长上下文的生成费用。",
-        "文档很小且不常变时，**直接把全文放进上下文**往往更简单也更准——不要为几页资料上一整套向量库。",
+        "文档很小且不常变时，直接把全文放进上下文往往更简单也更准——不要为几页资料上一整套向量库。",
         "资料更新是持续成本：文档改了要重新切片入库，忘记更新索引就会答旧内容。",
         "另一条边界：RAG 解决「知识」，不解决「能力」——改变风格、格式或技能要靠微调（c12）或提示工程。",
         "渐进策略更稳：先直接贴全文验证 → 不够再上检索 → 仍不够再优化切片、重排与混合检索。"
       ],
       summary_en: [
-        "RAG is not a panacea: **bad retrieval means bad answers** — missing documents, broken chunking or vocabulary mismatch all fail.",
+        "RAG is not a panacea: bad retrieval means bad answers — missing documents, broken chunking or vocabulary mismatch all fail.",
         "Its costs are real: embeddings, a vector store, chunking and index maintenance, plus retrieval and longer-context generation on every query.",
-        "For small, stable documents **pasting the full text** is simpler and often more accurate than a vector stack.",
+        "For small, stable documents pasting the full text is simpler and often more accurate than a vector stack.",
         "Updates are ongoing: changed documents must be re-chunked and re-indexed, or the system answers stale content.",
         "Another limit: RAG fixes knowledge, not capability — style, format or skills need fine-tuning (c12) or prompt engineering.",
         "Go gradually: paste the full text first → add retrieval if needed → then tune chunking, reranking and hybrid search."
@@ -320,8 +320,8 @@ const DEEPEN_AGENT_B = {
       title: "为什么需要 MCP——工具调用的乱象", title_en: "Why MCP Exists",
       summary: [
         "没有 MCP 之前，每个应用接工具都要自己写一套「工具描述 + 调用协议 + 鉴权」——同样的 GitHub 工具，A 应用和 B 应用的接法完全不同。",
-        "结果是三重浪费：**工具方**要为每个平台各写一份适配、**应用方**要为每个工具各写一套接入、**使用者**在不同应用里体验割裂。",
-        "MCP 把这件事标准化：**工具方写一次 Server，任何支持 MCP 的应用都能接**；应用方实现一次 Client，就能接入所有 Server。",
+        "结果是三重浪费：工具方要为每个平台各写一份适配、应用方要为每个工具各写一套接入、使用者在不同应用里体验割裂。",
+        "MCP 把这件事标准化：工具方写一次 Server，任何支持 MCP 的应用都能接；应用方实现一次 Client，就能接入所有 Server。",
         "类比：MCP 之于工具调用，就像 USB 之于外设——统一接口，双方各自实现一次。",
         "它同时定义了能力 vocabulary（Tools / Resources / Prompts）与传输方式（stdio / HTTP），所以「能做什么」和「怎么连」都有标准答案。",
         "理解动机很重要：MCP 不是「又一个框架」，而是解决 N×M 适配问题的行业协议。"
@@ -329,13 +329,13 @@ const DEEPEN_AGENT_B = {
       summary_en: [
         "Before MCP, every app rolled its own tool description, calling protocol and auth — the same GitHub tool was integrated differently in every app.",
         "That is a triple waste: tool authors adapt per platform, app authors integrate per tool, and users get fragmented experiences.",
-        "MCP standardises it: **write a server once, any MCP-capable app can use it**; implement a client once, connect to every server.",
+        "MCP standardises it: write a server once, any MCP-capable app can use it; implement a client once, connect to every server.",
         "Analogy: MCP is to tool calling what USB is to peripherals — one interface, implemented once on each side.",
         "It standardises both the capability vocabulary (Tools / Resources / Prompts) and the transport (stdio / HTTP), so 'what' and 'how' both have answers.",
         "MCP is not 'another framework' — it is an industry protocol solving the N×M integration problem."
       ],
       code: "没有 MCP：工具 × 应用 = N×M 份适配\n有了 MCP：工具写 1 次 Server + 应用实现 1 次 Client = N+M",
-      pit: "把 MCP 当成「又一个需要学习的框架」而抵触——它的价值恰恰是让你以后**少写**适配代码。",
+      pit: "把 MCP 当成「又一个需要学习的框架」而抵触——它的价值恰恰是让你以后少写适配代码。",
       pit_en: "Resisting MCP as 'yet another framework' misses the point: it exists so you write less glue code.",
       ex: {
         q: "MCP 解决的核心问题是什么？",
@@ -348,24 +348,24 @@ const DEEPEN_AGENT_B = {
     "c6l2": {
       title: "MCP 的角色：Host / Client / Server", title_en: "MCP Roles: Host, Client, Server",
       summary: [
-        "**Host** 是用户使用的应用（如 Claude Desktop、IDE），负责提供 UI、管理权限与用户确认——它是安全的责任方。",
-        "**Client** 运行在 Host 内部，负责与某个 Server 建立并维护连接（一个 Host 可以同时连多个 Server，各有各的 Client）。",
-        "**Server** 对外暴露能力（工具/资源/提示），可以是一个本地进程，也可以是远程服务。",
+        "Host 是用户使用的应用（如 Claude Desktop、IDE），负责提供 UI、管理权限与用户确认——它是安全的责任方。",
+        "Client 运行在 Host 内部，负责与某个 Server 建立并维护连接（一个 Host 可以同时连多个 Server，各有各的 Client）。",
+        "Server 对外暴露能力（工具/资源/提示），可以是一个本地进程，也可以是远程服务。",
         "三者分工清楚：Server 只声明能力不关心谁在用；Client 只管连接与转发；Host 决定「允不允许」。",
-        "权限与确认发生在 **Host 层**：调用工具前弹窗让用户确认，这是 MCP 安全模型的关键设计。",
+        "权限与确认发生在 Host 层：调用工具前弹窗让用户确认，这是 MCP 安全模型的关键设计。",
         "理解角色的意义在于排查问题：连不上 → 查 Client 与传输；工具行为不对 → 查 Server 实现；权限没弹窗 → 查 Host 设置。"
       ],
       summary_en: [
-        "**Host** is the app the user runs (Claude Desktop, an IDE): it owns the UI, permissions and user confirmation — it is responsible for safety.",
-        "**Client** lives inside the Host and maintains the connection to one server; a host can run several clients for several servers.",
-        "**Server** exposes capabilities (tools/resources/prompts) as a local process or remote service.",
+        "Host is the app the user runs (Claude Desktop, an IDE): it owns the UI, permissions and user confirmation — it is responsible for safety.",
+        "Client lives inside the Host and maintains the connection to one server; a host can run several clients for several servers.",
+        "Server exposes capabilities (tools/resources/prompts) as a local process or remote service.",
         "Clean separation: servers declare capabilities without caring who calls; clients handle transport; the host decides what is allowed.",
-        "Permissions and confirmation live at the **host layer** — the confirmation dialog before a tool call is a key part of the security model.",
+        "Permissions and confirmation live at the host layer — the confirmation dialog before a tool call is a key part of the security model.",
         "Role knowledge aids debugging: cannot connect → client/transport; wrong tool behaviour → server; no confirmation prompt → host settings."
       ],
       code: "Host（IDE/桌面应用）\n └─ Client ─── stdio/HTTP ─── Server（本地进程或远程服务）\n权限确认：Host 在调用前向用户弹窗",
-      pit: "把三个角色混为一谈（比如以为 Server 负责弹确认框）——权限与确认是 **Host** 的职责，Server 只声明能力。",
-      pit_en: "Conflating the roles — confirmation is the **host's** job; servers only declare capabilities.",
+      pit: "把三个角色混为一谈（比如以为 Server 负责弹确认框）——权限与确认是 Host 的职责，Server 只声明能力。",
+      pit_en: "Conflating the roles — confirmation is the host's job; servers only declare capabilities.",
       ex: {
         q: "「调用工具前向用户确认」是谁的职责？",
         a: "Host：它拥有 UI 与权限体系，在调用前向用户确认；Server 只声明并执行能力。",
@@ -377,17 +377,17 @@ const DEEPEN_AGENT_B = {
     "c6l3": {
       title: "MCP 能传什么：Tools / Resources / Prompts", title_en: "MCP Primitives: Tools, Resources, Prompts",
       summary: [
-        "MCP 有三类原语，回答「能传什么」：**Tools**（可执行的动作）、**Resources**（可读取的数据）、**Prompts**（可复用的提示模板）。",
+        "MCP 有三类原语，回答「能传什么」：Tools（可执行的动作）、Resources（可读取的数据）、Prompts（可复用的提示模板）。",
         "三者的边界就是「副作用」：Tools 会改变外部状态（发消息、写文件），Resources 只读不改，Prompts 只是文本。",
-        "Tools 由**模型决定**何时调用（模型自主选择）；Resources 由**应用/用户**决定何时读取；Prompts 由**用户**显式选择。",
+        "Tools 由模型决定何时调用（模型自主选择）；Resources 由应用/用户决定何时读取；Prompts 由用户显式选择。",
         "设计 Server 时按这个边界拆能力：能做成 Resources 的不要做成 Tools（只读的东西不该有副作用入口）。",
         "Prompts 常被忽略，但它很有用：把团队的最佳问法固化成模板，用户敲个斜杠就能用。",
         "同一份数据可以同时以 Resources 和 Tools 暴露——只读走 Resources，需要参数化查询时走 Tools。"
       ],
       summary_en: [
-        "MCP has three primitives answering 'what can be shared': **Tools** (actions), **Resources** (readable data), **Prompts** (reusable templates).",
+        "MCP has three primitives answering 'what can be shared': Tools (actions), Resources (readable data), Prompts (reusable templates).",
         "The boundary is side effects: tools change external state, resources are read-only, prompts are just text.",
-        "Who decides: the **model** picks tools, the **app/user** picks resources, the **user** picks prompts.",
+        "Who decides: the model picks tools, the app/user picks resources, the user picks prompts.",
         "Design servers along this line: anything read-only should be a Resource, not a Tool.",
         "Prompts are underrated: they freeze a team's best phrasings into slash-command templates.",
         "The same data can be exposed both ways — read-only via Resources, parameterised queries via Tools."
@@ -406,20 +406,20 @@ const DEEPEN_AGENT_B = {
     "c6l4": {
       title: "MCP vs Function Calling 的区别", title_en: "MCP vs Function Calling",
       summary: [
-        "两者不是竞争关系，而是**不同层次**：Function Calling 是**模型的能力**（决定调用哪个函数），MCP 是**连接协议**（工具如何被描述、发现与调用）。",
+        "两者不是竞争关系，而是不同层次：Function Calling 是模型的能力（决定调用哪个函数），MCP 是连接协议（工具如何被描述、发现与调用）。",
         "可以这么理解：Function Calling 回答「模型怎么决定调工具」，MCP 回答「工具从哪来、怎么连、怎么鉴权」。",
         "配合方式：MCP Server 把工具暴露给 Host，Host 把工具的 schema 通过 Function Calling 交给模型，模型决定调用后由 Host 执行并回传结果。",
         "没有 MCP 也能用 Function Calling——只是每个工具都要自己写接入；有了 MCP，工具的「发现与接入」被标准化了。",
-        "迁移角度：已有的 Function Calling 代码不需要推倒重来，MCP 通常作为**工具来源**的一层替换或补充。",
-        "一句话：**Function Calling 是引擎，MCP 是标准化的插座**。"
+        "迁移角度：已有的 Function Calling 代码不需要推倒重来，MCP 通常作为工具来源的一层替换或补充。",
+        "一句话：Function Calling 是引擎，MCP 是标准化的插座。"
       ],
       summary_en: [
-        "They are different layers, not rivals: function calling is a **model capability** (deciding which function to call), MCP is a **connection protocol** (how tools are described, discovered and called).",
+        "They are different layers, not rivals: function calling is a model capability (deciding which function to call), MCP is a connection protocol (how tools are described, discovered and called).",
         "Function calling answers 'how does the model decide'; MCP answers 'where do tools come from, how do they connect and authenticate'.",
         "They compose: an MCP server exposes tools to the host, the host passes schemas via function calling, the model decides, the host executes and returns results.",
         "Function calling works without MCP — you just hand-wire every tool; MCP standardises discovery and integration.",
         "Migration-wise, existing function-calling code stays; MCP usually replaces or supplements the tool-source layer.",
-        "One line: **function calling is the engine; MCP is the standard socket**."
+        "One line: function calling is the engine; MCP is the standard socket."
       ],
       code: "模型（Function Calling 决定调用）\n   ↑ schema\nHost（把 MCP 工具转成模型可见的函数）\n   ↑ 协议\nMCP Server（工具的真正实现）",
       pit: "以为「用了 MCP 就不需要 Function Calling」——模型决定调用靠的仍是 Function Calling；MCP 只是换了工具的来源与接入方式。",
@@ -435,7 +435,7 @@ const DEEPEN_AGENT_B = {
     "c6l5": {
       title: "自己搭一个 MCP Server", title_en: "Building Your Own MCP Server",
       summary: [
-        "搭一个最小 Server 只需要三步：**声明工具**（名字、描述、参数 schema）→ **实现处理函数** → **注册传输**（stdio 或 HTTP）。",
+        "搭一个最小 Server 只需要三步：声明工具（名字、描述、参数 schema）→ 实现处理函数 → 注册传输（stdio 或 HTTP）。",
         "工具的 description 是给模型看的「使用说明书」：写清楚什么时候该用、参数含义，模型调用的准确率直接取决于它。",
         "参数 schema 要精确：类型、必填、枚举值、默认值——越精确，模型填错参数的概率越低。",
         "返回值要对模型友好：返回结构化文本（而不是二进制），出错时返回可读的错误信息而不是抛异常堆栈。",
@@ -443,7 +443,7 @@ const DEEPEN_AGENT_B = {
         "安全三查：这个工具能不能改数据？能不能外发？出错时的爆炸半径多大——按答案决定是否需要 Host 层确认。"
       ],
       summary_en: [
-        "A minimal server is three steps: **declare tools** (name, description, parameter schema) → **implement handlers** → **register transport** (stdio or HTTP).",
+        "A minimal server is three steps: declare tools (name, description, parameter schema) → implement handlers → register transport (stdio or HTTP).",
         "The tool description is the model's manual: when to use it and what parameters mean — call accuracy depends directly on it.",
         "Make schemas precise: types, required flags, enums and defaults reduce wrong arguments.",
         "Return model-friendly results: structured text, not binary; readable errors, not stack traces.",
@@ -494,16 +494,16 @@ const DEEPEN_AGENT_B = {
       title: "Transport：stdio 与 HTTP/SSE 怎么选", title_en: "Transport: stdio vs HTTP/SSE",
       summary: [
         "MCP 把「说什么」和「怎么传」分开：能力设计用 Tools / Resources / Prompts，传输方式交给 Transport。",
-        "本地最常用 **stdio**——Server 就是宿主拉起的子进程，用标准输入输出传 JSON-RPC；简单、隔离好、无需网络。",
-        "远程用 **Streamable HTTP / SSE**：Server 部署在服务端供多人共享，必须补上鉴权、TLS 与重连。",
+        "本地最常用 stdio——Server 就是宿主拉起的子进程，用标准输入输出传 JSON-RPC；简单、隔离好、无需网络。",
+        "远程用 Streamable HTTP / SSE：Server 部署在服务端供多人共享，必须补上鉴权、TLS 与重连。",
         "stdio 的优势是安全与简单：进程随 Host 启停、天然隔离；劣势是无法多人共享、不能远程。",
         "HTTP 的优势是共享与集中管理（一处升级全员生效）；劣势是要处理鉴权、网络与多租户隔离。",
         "换 Transport 不需要改 Server 的能力语义——这正是「能力与传输分离」设计的价值。"
       ],
       summary_en: [
         "MCP separates what is said from how it travels: capability design uses Tools / Resources / Prompts, while transport decides delivery.",
-        "Locally the norm is **stdio** — the server is a child process the host spawns, exchanging JSON-RPC over stdin/stdout: simple, isolated, no network.",
-        "Remote uses **Streamable HTTP / SSE**: a shared server that must add auth, TLS and reconnect logic.",
+        "Locally the norm is stdio — the server is a child process the host spawns, exchanging JSON-RPC over stdin/stdout: simple, isolated, no network.",
+        "Remote uses Streamable HTTP / SSE: a shared server that must add auth, TLS and reconnect logic.",
         "stdio wins on safety and simplicity (the process lives and dies with the host) but cannot be shared or remote.",
         "HTTP wins on sharing and central upgrades; it costs auth, networking and multi-tenant isolation.",
         "Swapping transport does not change capability semantics — the value of separating capability from transport."
@@ -523,17 +523,17 @@ const DEEPEN_AGENT_B = {
       title: "MCP 的安全边界与权限", title_en: "MCP: Security Boundaries & Permissions",
       summary: [
         "MCP 让模型能做的事变多，风险也随之放大：越权读文件、误删数据、把敏感内容外发。",
-        "落地抓四条：**能力最小化**（只暴露必需的工具与资源）、**目录边界**（Roots）、**写操作人工确认**、**全程审计日志**。",
+        "落地抓四条：能力最小化（只暴露必需的工具与资源）、目录边界（Roots）、写操作人工确认、全程审计日志。",
         "第三方 Server 要像对待第三方代码一样审查：它声明了什么能力、要访问什么、会不会联网。",
-        "权限确认的体验要设计： confirmation 太多用户会盲点，太少则失去保护——把确认留给**真正危险的动作**。",
+        "权限确认的体验要设计： confirmation 太多用户会盲点，太少则失去保护——把确认留给真正危险的动作。",
         "审计日志要记全：每次工具调用的入参、结果、时间与是否被用户批准——出事后这是唯一能还原现场的依据。",
         "最小权限原则同样适用于资源：Roots 限定目录、按需暴露文件，而不是整个磁盘。"
       ],
       summary_en: [
         "MCP multiplies what the model can do, and with it the risk: unauthorised reads, accidental deletion, sensitive data exfiltration.",
-        "Four practices: **least capability**, **directory boundaries (Roots)**, **human confirmation for writes**, and **full audit logging**.",
+        "Four practices: least capability, directory boundaries (Roots), human confirmation for writes, and full audit logging.",
         "Vet third-party servers like third-party code: what capabilities do they declare, what do they access, do they phone home?",
-        "Design the confirmation UX: too many prompts get blindly accepted, too few lose protection — reserve them for **genuinely dangerous actions**.",
+        "Design the confirmation UX: too many prompts get blindly accepted, too few lose protection — reserve them for genuinely dangerous actions.",
         "Log everything: inputs, results, timestamps and whether the user approved — the only way to reconstruct an incident.",
         "Least privilege applies to resources too: bound with Roots and expose files on demand, not the whole disk."
       ],
@@ -552,19 +552,19 @@ const DEEPEN_AGENT_B = {
     "c7l1": {
       title: "什么是 Agent：会“自己想办法”的模型", title_en: "What Is an Agent",
       summary: [
-        "Agent = **LLM + 自主循环 + 工具**：模型不再只是回答，而是围绕一个目标自己决定「下一步做什么」，直到任务完成。",
-        "与普通对话的区别在于**自主性**：对话是你问它答，Agent 是你给目标、它自己拆步骤、选工具、执行并验证。",
-        "支撑它的是三件事：**规划**（拆解目标）、**工具**（与外部世界交互）、**记忆**（跨步骤保持信息）。",
+        "Agent = LLM + 自主循环 + 工具：模型不再只是回答，而是围绕一个目标自己决定「下一步做什么」，直到任务完成。",
+        "与普通对话的区别在于自主性：对话是你问它答，Agent 是你给目标、它自己拆步骤、选工具、执行并验证。",
+        "支撑它的是三件事：规划（拆解目标）、工具（与外部世界交互）、记忆（跨步骤保持信息）。",
         "Agent 的能力边界由工具决定：没有文件工具就改不了文件，没有搜索工具就查不了资料——工具清单就是能力清单。",
-        "自主性也带来风险：它会「自作主张」走偏，所以必须有**终止条件**与**最大步数**限制。",
+        "自主性也带来风险：它会「自作主张」走偏，所以必须有终止条件与最大步数限制。",
         "判断是否需要 Agent 的标准：任务是否需要多步、是否需要外部信息或操作、步骤是否难以预先写死——三者皆是才值得上 Agent。"
       ],
       summary_en: [
-        "An agent = **LLM + autonomous loop + tools**: instead of just answering, it decides what to do next toward a goal until the task is done.",
-        "The difference from chat is **autonomy**: you give a goal and it plans, picks tools, executes and verifies by itself.",
-        "Three pillars: **planning** (decompose goals), **tools** (interact with the world), **memory** (keep information across steps).",
+        "An agent = LLM + autonomous loop + tools: instead of just answering, it decides what to do next toward a goal until the task is done.",
+        "The difference from chat is autonomy: you give a goal and it plans, picks tools, executes and verifies by itself.",
+        "Three pillars: planning (decompose goals), tools (interact with the world), memory (keep information across steps).",
         "Its capability boundary is the tool list: no file tools means no file edits; no search means no research.",
-        "Autonomy brings risk: it can wander, so you need **termination conditions** and a **max-step cap**.",
+        "Autonomy brings risk: it can wander, so you need termination conditions and a max-step cap.",
         "When to use an agent: multi-step, needs external information or actions, and steps are hard to pre-script — all three."
       ],
       code: "while (not done and steps < MAX):\n    thought = llm(目标 + 历史 + 工具列表)\n    action  = 解析(thought)        # 调用哪个工具、参数是什么\n    result  = 执行(action)\n    历史.append(result)",
@@ -581,17 +581,17 @@ const DEEPEN_AGENT_B = {
     "c7l2": {
       title: "ReAct：思考—行动—观察", title_en: "ReAct: Reason, Act, Observe",
       summary: [
-        "ReAct 是 Agent 最经典的循环模式：**Thought**（思考要做什么）→ **Action**（调用工具）→ **Observation**（观察结果）→ 再思考，如此往复。",
+        "ReAct 是 Agent 最经典的循环模式：Thought（思考要做什么）→ Action（调用工具）→ Observation（观察结果）→ 再思考，如此往复。",
         "它的价值在于把「推理」和「行动」交替进行：每一步行动都基于当前最新的观察，而不是一次性规划到底。",
-        "Observation 这一步**绝不能省**：工具的结果是下一步决策的依据，跳过它等于蒙着眼睛走路。",
+        "Observation 这一步绝不能省：工具的结果是下一步决策的依据，跳过它等于蒙着眼睛走路。",
         "Thought 的质量取决于提示：要让模型「先想清楚再行动」，并明确它有哪些工具可用。",
         "循环要有出口：任务完成、达到最大步数、或连续 N 次失败——三个终止条件缺一不可。",
-        "调试 Agent 的第一步就是**打印完整循环**：每一步的 Thought / Action / Observation 摊开看，问题立刻现形。"
+        "调试 Agent 的第一步就是打印完整循环：每一步的 Thought / Action / Observation 摊开看，问题立刻现形。"
       ],
       summary_en: [
-        "ReAct is the classic agent loop: **Thought** (what to do) → **Action** (call a tool) → **Observation** (read the result) → repeat.",
+        "ReAct is the classic agent loop: Thought (what to do) → Action (call a tool) → Observation (read the result) → repeat.",
         "Its value is interleaving reasoning with action: each action is based on the latest observation rather than a one-shot plan.",
-        "The Observation step is **never optional** — tool results drive the next decision; skipping it is walking blindfolded.",
+        "The Observation step is never optional — tool results drive the next decision; skipping it is walking blindfolded.",
         "Thought quality depends on the prompt: ask the model to think before acting and list the available tools.",
         "The loop needs exits: task complete, max steps reached, or N consecutive failures — all three.",
         "Debugging starts with printing the full loop; Thought/Action/Observation laid out exposes problems immediately."
@@ -610,19 +610,19 @@ const DEEPEN_AGENT_B = {
     "c7l3": {
       title: "规划、工具与记忆", title_en: "Planning, Tools & Memory",
       summary: [
-        "**规划**是把大目标拆成可执行的子任务：好的规划能减少无效循环，差的规划会让 Agent 在细节里打转。",
+        "规划是把大目标拆成可执行的子任务：好的规划能减少无效循环，差的规划会让 Agent 在细节里打转。",
         "规划两种做法：让模型一次性列出全部步骤（计划式），或每步动态决定（渐进式）——前者可控、后者灵活，常混合使用。",
-        "**工具**是 Agent 的手脚：工具描述写得越清楚（何时用、参数含义、返回什么），选择就越准确。",
+        "工具是 Agent 的手脚：工具描述写得越清楚（何时用、参数含义、返回什么），选择就越准确。",
         "工具不宜过多：超过十几个后模型的选择准确率会下降，应按任务分组或动态启用。",
-        "**记忆**分两层：短期记忆（当前上下文里的对话与观察）与长期记忆（外部存储，需要时检索回来）。",
+        "记忆分两层：短期记忆（当前上下文里的对话与观察）与长期记忆（外部存储，需要时检索回来）。",
         "长期记忆通常用 RAG 实现：把关键结论写入向量库，下一轮按需取回——等于给 Agent 配了一个可检索的笔记本。"
       ],
       summary_en: [
-        "**Planning** decomposes a big goal into executable sub-tasks; good planning cuts wasted loops, bad planning spins in details.",
+        "Planning decomposes a big goal into executable sub-tasks; good planning cuts wasted loops, bad planning spins in details.",
         "Two styles: list all steps upfront (plan-style) or decide dynamically each step (incremental) — often mixed.",
-        "**Tools** are the agent's hands: the clearer the descriptions (when to use, parameters, returns), the more accurate the choice.",
+        "Tools are the agent's hands: the clearer the descriptions (when to use, parameters, returns), the more accurate the choice.",
         "Don't offer too many tools: past a dozen, selection accuracy drops; group or enable them dynamically.",
-        "**Memory** has two layers: short-term (context) and long-term (external storage retrieved on demand).",
+        "Memory has two layers: short-term (context) and long-term (external storage retrieved on demand).",
         "Long-term memory is usually RAG: write key conclusions to a vector store and retrieve them next round — a searchable notebook."
       ],
       code: "规划式：\n  1) 让模型先输出步骤清单（可人工确认）\n  2) 逐步执行，每步可回退\n渐进式：\n  每轮让模型在「继续/换方法/结束」中决策",
@@ -640,17 +640,17 @@ const DEEPEN_AGENT_B = {
       title: "多 Agent 协作", title_en: "Multi-Agent Collaboration",
       summary: [
         "多 Agent 是把一个复杂任务拆给多个各有分工的 Agent：例如「研究员负责查资料、写手负责成稿、审稿人负责挑错」。",
-        "它的价值是**职责分离**：每个 Agent 的提示更聚焦、上下文更干净，也便于单独优化与测试。",
-        "常见协作模式：**流水线**（A 的输出是 B 的输入）、**分工协作**（并行处理再汇总）、**审查者**（一个生成、一个挑错）。",
-        "代价是复杂度：通信协议、错误传播、成本翻倍——**能用单 Agent 解决就不要上多 Agent**。",
+        "它的价值是职责分离：每个 Agent 的提示更聚焦、上下文更干净，也便于单独优化与测试。",
+        "常见协作模式：流水线（A 的输出是 B 的输入）、分工协作（并行处理再汇总）、审查者（一个生成、一个挑错）。",
+        "代价是复杂度：通信协议、错误传播、成本翻倍——能用单 Agent 解决就不要上多 Agent。",
         "多 Agent 的通信要结构化：传递的不是「一段话」，而是明确的数据结构（任务、结果、状态），否则信息在传递中失真。",
         "务必有「总控」角色：负责分配任务、汇总结果与最终决策，避免多个 Agent 各说各话。"
       ],
       summary_en: [
         "Multi-agent splits a complex task among specialised agents: a researcher gathers, a writer drafts, a critic reviews.",
-        "The value is **separation of concerns**: focused prompts, cleaner contexts, and independently testable parts.",
-        "Common patterns: **pipeline** (A's output feeds B), **parallel split-and-merge**, and **generator-critic**.",
-        "The cost is complexity: protocols, error propagation and doubled spend — **use one agent if it suffices**.",
+        "The value is separation of concerns: focused prompts, cleaner contexts, and independently testable parts.",
+        "Common patterns: pipeline (A's output feeds B), parallel split-and-merge, and generator-critic.",
+        "The cost is complexity: protocols, error propagation and doubled spend — use one agent if it suffices.",
         "Communication must be structured: pass explicit data structures (task, result, status), not prose, or meaning decays.",
         "Always have an orchestrator: assign tasks, merge results and make the final call."
       ],
@@ -668,19 +668,19 @@ const DEEPEN_AGENT_B = {
     "c7l5": {
       title: "Agent 的失败模式", title_en: "Agent Failure Modes",
       summary: [
-        "失败模式一：**无限循环**——反复调用同一工具、或任务已完成仍在继续；解法是最大步数 + 完成判定的显式化。",
-        "失败模式二：**工具误用**——选错工具、参数填错、或在只读工具上期待副作用；解法是写清工具描述与参数校验。",
-        "失败模式三：**上下文溢出**——工具输出与历史堆积超出窗口；解法是裁剪、摘要与只保留关键字段。",
-        "失败模式四：**目标漂移**——做着做着偏离了原始目标；解法是在每轮提示里重申目标与已完成进度。",
-        "失败模式五：**过早放弃或过度自信**——没试几次就宣布失败，或连续成功后跳过验证；两者都要靠提示与流程约束。",
+        "失败模式一：无限循环——反复调用同一工具、或任务已完成仍在继续；解法是最大步数 + 完成判定的显式化。",
+        "失败模式二：工具误用——选错工具、参数填错、或在只读工具上期待副作用；解法是写清工具描述与参数校验。",
+        "失败模式三：上下文溢出——工具输出与历史堆积超出窗口；解法是裁剪、摘要与只保留关键字段。",
+        "失败模式四：目标漂移——做着做着偏离了原始目标；解法是在每轮提示里重申目标与已完成进度。",
+        "失败模式五：过早放弃或过度自信——没试几次就宣布失败，或连续成功后跳过验证；两者都要靠提示与流程约束。",
         "通用兜底：所有 Agent 都要有「降级方案」——失败时把已完成的部分与原因输出给用户，而不是静默返回垃圾。"
       ],
       summary_en: [
-        "Failure 1: **infinite loops** — repeating the same tool or continuing after completion; fix with max steps and explicit completion checks.",
-        "Failure 2: **tool misuse** — wrong tool, wrong arguments, or expecting side effects from read-only tools; fix with better descriptions and validation.",
-        "Failure 3: **context overflow** — tool outputs and history fill the window; fix with trimming, summarising and keeping only key fields.",
-        "Failure 4: **goal drift** — wandering from the original goal; restate the goal and progress in every turn.",
-        "Failure 5: **premature giving up or overconfidence** — quitting after a few tries or skipping verification after wins; constrain via prompts and process.",
+        "Failure 1: infinite loops — repeating the same tool or continuing after completion; fix with max steps and explicit completion checks.",
+        "Failure 2: tool misuse — wrong tool, wrong arguments, or expecting side effects from read-only tools; fix with better descriptions and validation.",
+        "Failure 3: context overflow — tool outputs and history fill the window; fix with trimming, summarising and keeping only key fields.",
+        "Failure 4: goal drift — wandering from the original goal; restate the goal and progress in every turn.",
+        "Failure 5: premature giving up or overconfidence — quitting after a few tries or skipping verification after wins; constrain via prompts and process.",
         "Universal fallback: every agent needs a degraded path — output what was done and why it failed instead of silently returning junk."
       ],
       code: "终止条件（三选一即停）：\n  1) 模型明确宣布任务完成\n  2) steps >= MAX_STEPS\n  3) 连续 3 次工具调用失败\n兜底：失败时输出 {done: [], failed: 原因, partial: 已完成部分}",
@@ -699,7 +699,7 @@ const DEEPEN_AGENT_B = {
       summary: [
         "Agent 的记忆分两层：短期记忆就是当前上下文窗口里的对话与观察；长期记忆是外部存储，需要时再检索回来。",
         "长期记忆通常用 RAG 实现：把要点写进向量库或数据库，下一轮按相似度取回，等于给 Agent 配了一个可检索的笔记本。",
-        "记忆要做「写什么」的取舍：沉淀**关键结论与用户偏好**，别把整段原始对话都存进去——噪声比信息还多。",
+        "记忆要做「写什么」的取舍：沉淀关键结论与用户偏好，别把整段原始对话都存进去——噪声比信息还多。",
         "短期记忆的管理是裁剪与摘要：保留最近 N 轮 + 对更早内容做摘要，system 提示永远保留。",
         "写入时机很讲究：任务结束、用户纠正模型、出现明确偏好时才写——不是每轮都写。",
         "检索回来的记忆要标注来源与时间，过期记忆（如用户已取消的偏好）要及时失效。"
@@ -707,7 +707,7 @@ const DEEPEN_AGENT_B = {
       summary_en: [
         "Agent memory has two layers: short-term is the context window (dialogue and observations); long-term is external storage retrieved on demand.",
         "Long-term memory is usually RAG: write key points to a vector store or database and fetch them next round — a searchable notebook.",
-        "Memory requires a 'what to write' judgement: persist **conclusions and user preferences**, not raw transcripts — noise outweighs signal.",
+        "Memory requires a 'what to write' judgement: persist conclusions and user preferences, not raw transcripts — noise outweighs signal.",
         "Short-term memory is managed by trimming and summarising: keep the last N turns plus a summary; always keep system.",
         "Write timing matters: at task end, when the user corrects the model, or on explicit preferences — not every turn.",
         "Retrieved memories should carry source and time, and stale ones (revoked preferences) must be invalidated."
