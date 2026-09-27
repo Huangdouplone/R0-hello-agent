@@ -19,7 +19,7 @@ const DEEPEN_AGENT_B = {
     "c4l1": {
       title: "系统提示与角色设定", title_en: "System Prompts & Role Setting",
       summary: [
-        "系统提示（system）位于 messages 数组开头，对整轮对话持续生效——它是最稳定的约束位置，规则应该写在这里而不是 user 消息里。",
+        "系统提示（System Prompt）位于 messages 数组开头，对整轮对话持续生效——它是最稳定的约束位置，规则应该写在这里而不是 user 消息里。",
         "角色设定的作用是缩小输出分布：同样是解释概念，「面向小学生」和「面向资深工程师」的答案完全不同。",
         "一个能用的系统提示骨架：身份 + 能力边界 + 输出格式 + 禁止事项，四块各占两三行即可，不必长篇大论。",
         "把「不变的规则」放 system、「每次变化的内容」放 user——改任务时不必重发规则，也更省 token。",
@@ -217,7 +217,7 @@ const DEEPEN_AGENT_B = {
         "Prompting matters: leading questions ('why is X correct') push the model to elaborate a false premise; open questions are safer.",
         "High-stakes domains (medical, legal, financial, destructive code ops) require mandatory citations plus human review."
       ],
-      code: "系统提示追加：\n只依据提供的资料回答；资料中没有的信息，回答「资料中未提及」。\n引用格式：[来源: 文件名#段落]",
+      code: "系统提示追加：\n只依据提供的资料回答；资料中没有的信息，回答「资料中未提及」。\n引用格式：[来源: 文件名#段落]\n\n使用示例（user 消息）：\n根据资料回答：我们公司的年假有几天？\n\n自检问句（把回答贴回来让模型自查）：\n逐句核对上面的回答，指出哪句有资料依据、哪句没有，没有依据的句子请改写为「资料中未提及」。",
       pit: "用「读起来顺不顺」判断答案真假——幻觉恰恰以通顺著称；唯一可靠的是核对依据与来源。",
       pit_en: "Judging truth by fluency is exactly backwards — hallucinations are fluent; only checking sources is reliable.",
       ex: {

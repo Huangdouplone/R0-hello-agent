@@ -497,6 +497,36 @@ var NEW_LABS = [
     req: ["OpenAI 兼容 SDK"],
     starter: "r = client.chat.completions.create(\n    model=M,\n    response_format={\"type\": \"json_object\"},\n    messages=[{\"role\": \"user\",\n               \"content\": \"把这句话抽成 JSON：{'title','tags'}。句子：大模型入门\"}])\nimport json; print(json.loads(r.choices[0].message.content))",
     hint: "提示里必须明确字段名与类型；拿到结果后仍要用 try/except 兜住解析失败。" },
+
+  { id: "lab13", stage: "c1", t: "亲手感受 temperature", t_en: "Feel Temperature First-Hand", mode: "text", xp: 20,
+    req: ["任意一个能调 Temperature 参数的对话界面（网页或本地均可）", "把同一问题用 3 档温度各问 2 次"],
+    req_en: ["Any chat UI that exposes a Temperature slider", "Ask the same question twice at each of three temperature levels"],
+    starter: "实验记录表（复制到回答里填写）： \n问题：用一句话解释什么是大模型 \ntemperature=0 两次回答： \ntemperature=0.7 两次回答： \ntemperature=1.2 两次回答： \n结论（发散度 / 稳定性 / 事实性各一句）：",
+    starter_en: "Experiment log (paste into your answer): \nQuestion: explain what an LLM is in one sentence \ntemperature=0, two answers: \ntemperature=0.7, two answers: \ntemperature=1.2, two answers: \nConclusion (one line each for diversity / stability / factuality):",
+    hint: "低温度适合事实问答与结构化输出，高温度适合创意发散；确定性任务别开高温。",
+    hint_en: "Low temperature suits factual Q&A and structured output; high suits creative divergence. Never use high temperature for deterministic tasks." },
+  { id: "lab14", stage: "c11", t: "给你的三个输出打分", t_en: "Score Three of Your Own Outputs", mode: "text", xp: 20,
+    req: ["选一个你真实用过的提示词，取 3 条不同模型或参数下的回答"],
+    req_en: ["Pick a prompt you actually used and take 3 answers from different models or settings"],
+    starter: "评估表（复制到回答里填写）： \n维度（每项 1-5 分）：事实正确 / 完整 / 可读 / 听话（是否按要求） \n回答 A：__ 总分 __ \n回答 B：__ 总分 __ \n回答 C：__ 总分 __ \n最优的一条还差哪两个维度？下次提示词怎么改：",
+    starter_en: "Score sheet (paste into your answer): \nDimensions (1-5 each): factual / complete / readable / obedient \nAnswer A: __ total __ \nAnswer B: __ total __ \nAnswer C: __ total __ \nWhich two dimensions did the best one still miss? How would you revise the prompt?",
+    hint: "没有评分维度就没有优化方向：先定维度再对比，比凭感觉说「这个好」有用得多。",
+    hint_en: "Without dimensions there is no direction: score first, compare second - far better than a gut feel." },
+  { id: "lab15", stage: "c12", t: "RAG / 微调 / 提示词选型决策", t_en: "Choose: RAG vs Fine-tuning vs Prompting", mode: "text", xp: 20,
+    req: ["对下列 4 个需求各选一种手段（可组合）并说明理由：", "① 客服机器人要答公司最新价格表；② 模型总用英文回答，要它固定用中文；③ 要它学会你司特有的行话风格；④ 预算为零、明天就要上线"],
+    req_en: ["Pick a method (or combination) for each need and justify:", "(1) a bot that must quote the latest price list; (2) the model keeps answering in English - force Chinese; (3) teach it your company jargon and style; (4) zero budget, ship tomorrow"],
+    starter: "答题模板（复制到回答里填写）： \n① 手段：__ 理由：__ \n② 手段：__ 理由：__ \n③ 手段：__ 理由：__ \n④ 手段：__ 理由：__ \n通用心法一句话：",
+    starter_en: "Template (paste into your answer): \n(1) method: __ why: __ \n(2) method: __ why: __ \n(3) method: __ why: __ \n(4) method: __ why: __ \nOne-line rule of thumb:",
+    hint: "知识新不新 → RAG；行为像不像 → 微调；两者都不是 → 先改提示词（最便宜、最快）。",
+    hint_en: "Stale knowledge -> RAG; wrong behaviour -> fine-tuning; neither -> fix the prompt first (cheapest and fastest)." },
+  { id: "lab16", stage: "c14", t: "把你的常用提示词做成一个 Skill", t_en: "Turn Your Favourite Prompt into a Skill", mode: "text", xp: 24,
+    req: ["选一个你重复使用 3 次以上的提示词", "按「名称 / 触发场景 / 提示词正文 / 输出格式」四段写成一个 Skill 文件", "说明它应该被谁（人还是 Agent）在什么时候触发"],
+    req_en: ["Pick a prompt you have reused 3+ times", "Write it as a Skill file with four sections: name / trigger / prompt body / output format", "State who (human or agent) should trigger it and when"],
+    starter: "Skill 文件模板（复制到回答里填写）： \nname: __ \ntrigger: __（什么场景自动想起它） \nprompt: __（正文，可含 {变量} 占位） \noutput: __（期望的输出格式） \n使用建议：__",
+    starter_en: "Skill file template (paste into your answer): \nname: __ \ntrigger: __ (when it should come to mind) \nprompt: __ (body, {placeholders} allowed) \noutput: __ (expected format) \nusage note: __",
+    hint: "好 Skill 的检验标准：三个月后的你不用回忆上下文也能照着用出同样的效果。",
+    hint_en: "The test of a good skill: three months later you can run it identically without recalling any context." },
+
   { id: "lab13", stage: "c5", t: "算一次 embedding 相似度", t_en: "Compute an Embedding Similarity", xp: 24,
     req: ["OpenAI 兼容 SDK", "numpy"],
     starter: "import numpy as np\ndef emb(t): return client.embeddings.create(model=\"text-embedding-3-small\", input=t).data[0].embedding\na, b = emb(\"退款政策\"), emb(\"怎么退货\")\ncos = np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))\nprint(round(cos, 3))",
@@ -608,7 +638,25 @@ var NEW_TERMS = [
     vs: "不是「每一步都问」，而是「危险的才问」。", vs_en: "Not every step — only the risky ones." },
   { term: "Grounding", term_en: "Grounding", short: "把回答锚定到给定资料，减少幻觉。", short_en: "Anchoring answers to provided material to reduce hallucination.", cat: "基础",
     detail: ["RAG 的最终目的就是 grounding。", "要求引用来源，便于核对与追责。"],
-    vs: "Grounding 讲「有依据」，幻觉讲「没依据」。", vs_en: "Grounding is about evidence; hallucination is about the lack of it." }
+    vs: "Grounding 讲「有依据」，幻觉讲「没依据」。", vs_en: "Grounding is about evidence; hallucination is about the lack of it." },
+  { term: "MCP", term_en: "MCP (Model Context Protocol)", short: "模型上下文协议：把工具/数据接给模型的开放标准。", short_en: "An open standard that wires tools and data into a model.",
+    detail: ["统一了「模型怎么找工具、怎么调用、怎么拿结果」这三件事。", "MCP Server 提供能力（文件、检索、API），MCP Client 由应用扮演。"],
+    vs: "MCP 管的是连接规范；Function Calling 是模型侧的调用机制，两者互补。", vs_en: "MCP standardises the connection; function calling is the model-side mechanism — they complement each other." },
+  { term: "RAG", term_en: "RAG (Retrieval-Augmented Generation)", short: "检索增强生成：先查资料，再让模型按资料作答。", short_en: "Retrieve first, then let the model answer grounded on what was retrieved.",
+    detail: ["三步：切片入库 → 按问题检索 → 把命中的片段塞进提示词。", "能大幅减少幻觉，也让知识更新不必重训模型。"],
+    vs: "RAG 解决「知识不够新/不够专」；微调解决「行为不像」。", vs_en: "RAG fixes stale or missing knowledge; fine-tuning fixes behaviour." },
+  { term: "Token", term_en: "Token", short: "模型计费与上下文的最小单位，约等于词的一个片段。", short_en: "The smallest unit of billing and context — roughly a word fragment.",
+    detail: ["中文约 1 字 ≈ 1~2 token；上下文窗口按 token 计。", "费用 = 输入 token 单价 × 数量 + 输出同算。"],
+    vs: "Token 是计量单位，不是字符也不是词。", vs_en: "A token is a billing unit — not a character, not a word." },
+  { term: "Ollama", term_en: "Ollama", short: "一条命令在本地跑开源模型的最简工具。", short_en: "The simplest way to run open models locally with one command.",
+    detail: ["ollama pull / run 两步即可离线对话；默认开放本地 API。", "配合 OpenAI 兼容端点，现有代码几乎零改动迁移。"],
+    vs: "Ollama 胜在简单；vLLM 胜在高吞吐生产服务。", vs_en: "Ollama wins on simplicity; vLLM wins on production throughput." },
+  { term: "vLLM", term_en: "vLLM", short: "高吞吐的本地模型服务引擎，生产部署常用。", short_en: "A high-throughput engine for serving local models in production.",
+    detail: ["核心是 PagedAttention：像操作系统管内存一样管 KV 缓存。", "兼容 OpenAI API 格式，可直接替换 base_url。"],
+    vs: "要并发与吞吐选 vLLM；要本机随手玩选 Ollama。", vs_en: "Choose vLLM for concurrency; Ollama for quick local play." },
+  { term: "API Key", term_en: "API Key", short: "调用云 API 的身份凭证，等同账户与计费的钥匙。", short_en: "The credential that identifies you to a cloud API — it bills your account.",
+    detail: ["放在环境变量或配置文件，不要硬编码进代码或上传仓库。", "按工具分钥：独立发放、独立限额、可独立吊销。"],
+    vs: "Key 泄露 = 别人用你的钱；泄露后第一件事是吊销。", vs_en: "A leaked key means someone else spends your money — revoke it first." }
 ];
 
 /* 老词条补充分类（原 agent-extra-data.js 的 10 条 + 本文件前 6 条），使名词库可按类归组 */
@@ -1149,6 +1197,10 @@ var QUIZ_EN = {
  * 六、新增实战英文（键 = lab id）
  * ============================================================ */
 var LAB_BODY_EN = {
+  "lab13": { req: ["Any chat UI that exposes a Temperature slider", "Ask the same question twice at each of three temperature levels"], starter: "Experiment log (paste into your answer): \nQuestion: explain what an LLM is in one sentence \ntemperature=0, two answers: \ntemperature=0.7, two answers: \ntemperature=1.2, two answers: \nConclusion (one line each for diversity / stability / factuality):", hint: "Low temperature suits factual Q&A and structured output; high suits creative divergence. Never use high temperature for deterministic tasks." },
+  "lab14": { req: ["Pick a prompt you actually used and take 3 answers from different models or settings"], starter: "Score sheet (paste into your answer): \nDimensions (1-5 each): factual / complete / readable / obedient \nAnswer A: __ total __ \nAnswer B: __ total __ \nAnswer C: __ total __ \nWhich two dimensions did the best one still miss? How would you revise the prompt?", hint: "Without dimensions there is no direction: score first, compare second - far better than a gut feel." },
+  "lab15": { req: ["Pick a method (or combination) for each need and justify:", "(1) a bot that must quote the latest price list; (2) the model keeps answering in English - force Chinese; (3) teach it your company jargon and style; (4) zero budget, ship tomorrow"], starter: "Template (paste into your answer): \n(1) method: __ why: __ \n(2) method: __ why: __ \n(3) method: __ why: __ \n(4) method: __ why: __ \nOne-line rule of thumb:", hint: "Stale knowledge -> RAG; wrong behaviour -> fine-tuning; neither -> fix the prompt first (cheapest and fastest)." },
+  "lab16": { req: ["Pick a prompt you have reused 3+ times", "Write it as a Skill file with four sections: name / trigger / prompt body / output format", "State who (human or agent) should trigger it and when"], starter: "Skill file template (paste into your answer): \nname: __ \ntrigger: __ (when it should come to mind) \nprompt: __ (body, {placeholders} allowed) \noutput: __ (expected format) \nusage note: __", hint: "The test of a good skill: three months later you can run it identically without recalling any context." },
   "lab9": { req: ["Python", "python-dotenv"], starter: "# pip install python-dotenv\nfrom dotenv import load_dotenv\nimport os\nload_dotenv()\nprint(\"key loaded:\", bool(os.environ.get(\"OPENAI_API_KEY\")))", hint: "Create .env with OPENAI_API_KEY=..., and add it to .gitignore so it never gets committed." },
   "lab10": { req: ["Any calculator / Python"], starter: "n = 500          # requests per day\nin_tok, out_tok = 800, 300\np_in, p_out = 0.5/1e6, 1.5/1e6   # sample unit prices\nprint((n*in_tok*p_in + n*out_tok*p_out) * 30)", hint: "Replace the unit prices with your platform's real ones, then multiply by the number of days." },
   "lab11": { req: ["Python"], starter: "BANNED = [\"card number\", \"password\", \"id number\"]\ndef guard(text):\n    for b in BANNED:\n        if b in text:\n            return False, f\"contains: {b}\"\n    return True, \"ok\"\nprint(guard(\"my card number is...\"))", hint: "A real guardrail also needs length limits, injection keyword checks and output validation." },
@@ -1162,6 +1214,12 @@ var LAB_BODY_EN = {
  * 七、新增名词明细英文（键 = term）
  * ============================================================ */
 var TERM_DETAIL_EN = {
+  "MCP":["It standardises how a model discovers tools, calls them and gets results back.","An MCP server provides capabilities (files, search, APIs); the app plays the client."],
+  "RAG (Retrieval-Augmented Generation)":["Three steps: chunk and index, retrieve per question, then stuff the hits into the prompt.","Cuts hallucinations a lot and updates knowledge without retraining."],
+  "Token":["One Chinese character is roughly 1-2 tokens; context windows are counted in tokens.","Cost = input tokens x price + output tokens x price."],
+  "Ollama":["ollama pull / run gives you an offline chat in two steps; a local API is exposed by default.","With an OpenAI-compatible endpoint, existing code migrates with near-zero changes."],
+  "vLLM":["The core is PagedAttention: managing the KV cache like an OS manages memory.","OpenAI-compatible API format - just swap the base_url."],
+  "API Key":["Keep them in environment variables or config files - never hard-code them or commit them.","One key per tool: issue, rate-limit and revoke independently."],
   "Temperature": ["Between 0 and 1; 0–0.3 for structured tasks, 0.7+ for creative writing.", "It is not a 'smartness' dial — only randomness."],
   "Inference": ["Calling an API or running a local model is inference.", "Opposite of training: training changes weights, inference reads them."],
   "Quantization": ["Common Q4/Q8: weights stored in 4/8-bit.", "Lower bits save memory but slightly reduce quality."],
