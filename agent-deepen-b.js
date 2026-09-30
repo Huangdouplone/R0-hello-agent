@@ -382,7 +382,8 @@ const DEEPEN_AGENT_B = {
         "Tools 由模型决定何时调用（模型自主选择）；Resources 由应用/用户决定何时读取；Prompts 由用户显式选择。",
         "设计 Server 时按这个边界拆能力：能做成 Resources 的不要做成 Tools（只读的东西不该有副作用入口）。",
         "Prompts 常被忽略，但它很有用：把团队的最佳问法固化成模板，用户敲个斜杠就能用。",
-        "同一份数据可以同时以 Resources 和 Tools 暴露——只读走 Resources，需要参数化查询时走 Tools。"
+        "同一份数据可以同时以 Resources 和 Tools 暴露——只读走 Resources，需要参数化查询时走 Tools。",
+        "命名口径对齐规范：宿主应用叫 MCP Host，应用内连接层叫 MCP Client，能力提供方叫 MCP Server；三类原语在词典与规范里的全称是 MCP Tools / MCP Resources / MCP Prompts——查词典按这些名字检索。"
       ],
       summary_en: [
         "MCP has three primitives answering 'what can be shared': Tools (actions), Resources (readable data), Prompts (reusable templates).",
@@ -390,7 +391,8 @@ const DEEPEN_AGENT_B = {
         "Who decides: the model picks tools, the app/user picks resources, the user picks prompts.",
         "Design servers along this line: anything read-only should be a Resource, not a Tool.",
         "Prompts are underrated: they freeze a team's best phrasings into slash-command templates.",
-        "The same data can be exposed both ways — read-only via Resources, parameterised queries via Tools."
+        "The same data can be exposed both ways — read-only via Resources, parameterised queries via Tools.",
+        "Naming convention (also how the glossary indexes them): host app = MCP Host, in-app connection layer = MCP Client, capability provider = MCP Server, and the three primitives are formally MCP Tools / MCP Resources / MCP Prompts."
       ],
       code: "Tools     → send_email(to, body)        模型决定调用\nResources → file:///notes/llm.md        应用按需读取\nPrompts   → /review-pr                  用户显式选择",
       pit: "把「只读数据」也包装成 Tools——模型可能频繁误调，还平白多出参数校验与副作用的烦恼。",

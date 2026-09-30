@@ -656,7 +656,19 @@ var NEW_TERMS = [
     vs: "要并发与吞吐选 vLLM；要本机随手玩选 Ollama。", vs_en: "Choose vLLM for concurrency; Ollama for quick local play." },
   { term: "API Key", term_en: "API Key", short: "调用云 API 的身份凭证，等同账户与计费的钥匙。", short_en: "The credential that identifies you to a cloud API — it bills your account.",
     detail: ["放在环境变量或配置文件，不要硬编码进代码或上传仓库。", "按工具分钥：独立发放、独立限额、可独立吊销。"],
-    vs: "Key 泄露 = 别人用你的钱；泄露后第一件事是吊销。", vs_en: "A leaked key means someone else spends your money — revoke it first." }
+    vs: "Key 泄露 = 别人用你的钱；泄露后第一件事是吊销。", vs_en: "A leaked key means someone else spends your money — revoke it first." },
+  { term: "Skill", term_en: "Skill", short: "把一条可复用的提示词打包成可调用的能力文件。", short_en: "A reusable prompt packaged as an invocable capability file.",
+    detail: ["四段结构：名称 / 触发场景 / 提示词正文 / 输出格式。", "与插件的区别：Skill 是纯文本资产，插件是带代码的扩展。"],
+    vs_en: "A Skill is a text asset; a plugin ships code." },
+  { term: "插件", term_en: "Plugin", short: "带代码的扩展：给 Agent 增加它本来没有的能力。", short_en: "A code extension that gives the agent capabilities it lacks.",
+    detail: ["插件由开发者实现并分发，更新随代码走。", "安全边界：装插件等于授权它以你的身份执行动作。"],
+    vs: "Skill 零代码即写即用；插件能力强但需要审核来源。", vs_en: "Skills are zero-code; plugins are powerful but audit the source." },
+  { term: "钩子", term_en: "Hook", short: "在特定事件点自动执行的配置（如提交前、回复后）。", short_en: "Config that auto-runs at specific lifecycle events (pre-commit, post-reply).",
+    detail: ["让流程规则从「靠人记得」变成「自动发生」。", "常见：写入前格式化、发信前脱敏、回复后记日志。"],
+    vs: "钩子是被动触发，命令是主动调用。", vs_en: "Hooks fire passively; commands are invoked actively." },
+  { term: "命令面板", term_en: "Command Palette", short: "把常用操作注册成可检索的命令入口。", short_en: "Register frequent actions as searchable command entries.",
+    detail: ["斜杠命令（/xxx）是最常见形态：输入即发现，不必背菜单。", "与 Skill 天然搭配：一个 Skill 就是一条命令。"],
+    vs: "命令面板解决「找得到」，Skill 解决「写得对」。", vs_en: "The palette solves discoverability; Skills solve quality." }
 ];
 
 /* 老词条补充分类（原 agent-extra-data.js 的 10 条 + 本文件前 6 条），使名词库可按类归组 */
@@ -1266,7 +1278,11 @@ var TERM_DETAIL_EN = {
   "蒸馏": ["Cheap to train and fast to run; suits vertical tasks with clear boundaries.", "The student inherits the teacher's mistakes, so generated data must be cleaned."],
   "QLoRA": ["VRAM ≈ a 4-bit base model plus adapter and optimizer state.", "Hyperparameters: learning rate around 1e-4, 1–3 epochs."],
   "灰度发布": ["AI failures usually surface only under real inputs.", "Roll out gradually by user share, channel or region."],
-  "扩展机制": ["Four kinds: Skill (procedure), Plugin (external systems), Hook (event-driven automation), Command (shortcut).", "Choose by asking who triggers it first, then what is being extended."]
+  "扩展机制": ["Four kinds: Skill (procedure), Plugin (external systems), Hook (event-driven automation), Command (shortcut).", "Choose by asking who triggers it first, then what is being extended."],
+  "Skill":["Four sections: name / trigger / prompt body / output format.","A Skill is a plain-text asset; a plugin ships code."],
+  "插件":["Plugins are implemented and distributed by developers; updates travel with the code.","Installing one authorises it to act as you."],
+  "钩子":["Turn process rules from something people remember into something that happens automatically.","Common: format before write, redact before send, log after reply."],
+  "命令面板":["Slash commands (/xxx) are the common form: type to discover, no menus to memorise.","They pair naturally with Skills: one Skill is one command."],
 };
 
 /* ============================================================
