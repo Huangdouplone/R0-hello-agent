@@ -316,6 +316,7 @@ body.sbCollapsed .sb-toggle{display:flex;}
 /* 热力图 */
 .heatmap{display:grid;grid-template-columns:repeat(52,1fr);gap:3px;}
 .heat-cell{aspect-ratio:1;border-radius:2px;background:var(--bg2);}
+@media(max-width:640px){#heatmapSec{overflow-x:auto;-webkit-overflow-scrolling:touch;}.heatmap{min-width:780px;}}
 .heat-cell.l1{background:#c8e6c9;}
 .heat-cell.l2{background:#81c784;}
 .heat-cell.l3{background:#4caf50;}
@@ -352,7 +353,21 @@ body.sbCollapsed .sb-toggle{display:flex;}
 @media(min-width:980px){body{padding-left:284px;}.sidebar{transform:none;}}
 @media(max-width:979px){.sb-toggle{display:flex;}}
 @media(max-width:720px){body{padding:14px;}.header{padding:16px 18px;}}
-@media(max-width:640px){.header h1{font-size:18px;}}
+@media(max-width:640px){
+  .header h1{font-size:18px;padding-right:96px;}
+  .header{padding:14px 16px 14px 50px;}
+  .header .right{gap:8px;}
+  .header-top{flex-wrap:wrap;}
+  .lang-bar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+  .mini-prog{flex-wrap:nowrap;}
+  .today-wrap{gap:12px;flex-direction:column;}
+  .today-main{min-width:0;width:100%;}
+  #heatmapSec{mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);}
+  .sb-nav{min-height:40px;}
+  .sb-item,.sb-group-hd{min-height:40px;}
+  .td-close{min-height:34px;padding:6px 10px;}
+  .toast{max-width:calc(100vw - 24px);}
+}
 
 /* ===== 断点续学条 ===== */
 .resume-bar{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
@@ -363,6 +378,7 @@ body.sbCollapsed .sb-toggle{display:flex;}
 /* ===== 交互式概念图 ===== */
 .cmap-wrap{overflow-x:auto;}
 .cmap-svg{width:100%;height:auto;min-height:380px;min-width:640px;display:block;background:var(--soft);border:1px solid var(--line);border-radius:14px;}
+@media(max-width:640px){.cmap-svg{min-width:840px;min-height:0;}.cmap-wrap{-webkit-overflow-scrolling:touch;mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);}}
 .cmap-svg .nd{cursor:pointer;}
 .cmap-svg .nd rect{fill:var(--card);stroke:var(--line);stroke-width:1.5;transition:fill .15s,stroke .15s;}
 .cmap-svg .nd text{fill:var(--ink);font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:middle;pointer-events:none;}
@@ -664,8 +680,8 @@ body.sbCollapsed .sb-toggle{display:flex;}
 
 <script src="agent-extra-data.js?v=7"></script>
 <script src="lang-en.js?v=3"></script>
-<script src="ped-ext.js?v=1"></script>
-<script src="lang-en-content.js?v=14"></script>
+<script src="ped-ext.js?v=2"></script>
+<script src="lang-en-content.js?v=15"></script>
 <script src="agent-extra-data2.js?v=7"></script>
 <script src="agent-deepen-a.js?v=2"></script>
 <script src="agent-deepen-b.js?v=2"></script>
@@ -2618,9 +2634,6 @@ window.addEventListener("scroll", function () {
 })();
 if ("serviceWorker" in navigator) { try { navigator.serviceWorker.register("agent-sw.js").catch(function () {}); } catch (e) {} }
 </script>
-
-/* 资源完整性自检已移至 diagnose.html（手动诊断页） */
-
 
 </body>
 </html>

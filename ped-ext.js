@@ -38,6 +38,7 @@ window.AGENT_EXT_MARKS = {
     "MCP Sampling": 1,
     "Tool Schema": 1,
     "Agent Loop": 1,
-    "Chain of Thought": 1
+    "Chain of Thought": 1,
+    "命令面板": 1
   }
 };
